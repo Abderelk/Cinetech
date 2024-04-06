@@ -8,7 +8,7 @@ const Login = () => {
     const { login, logout, isLoggedIn, checkAuthStatus } = useContext(AuthContext);
     const [user, setUser] = useState([]);
 
-    const onSubmit = async (e) => {
+    const connexion = async (e) => {
         e.preventDefault();
         try {
             await login(user);
@@ -16,6 +16,18 @@ const Login = () => {
             console.error('Erreur lors de la connexion', error);
         }
     };
+
+    const deconnexion = async (e) => {
+        e.preventDefault();
+        try {
+            await logout();
+        }
+        catch (error) {
+            console.error('Erreur lors de la déconnexion', error);
+        }
+
+
+    }
     useEffect(() => {
         checkAuthStatus();
     }, []);
@@ -27,7 +39,7 @@ const Login = () => {
             <Link to="/inscription">Inscription</Link>
 
             <h1>Login</h1>
-            <form onSubmit={onSubmit}>
+            <form onSubmit={isLoggedIn ? deconnexion : connexion}>
                 <label htmlFor="email">Email</label>
                 <input
                     type="email"

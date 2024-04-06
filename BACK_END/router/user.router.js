@@ -2,7 +2,8 @@ import express from 'express';
 import {
     signUp,
     login,
-    checkAuth
+    checkAuth,
+    logout
 } from '../controllers/user.controller.js';
 
 const router = express.Router();
@@ -10,5 +11,6 @@ const router = express.Router();
 router.post('/signup', signUp);
 router.post('/login', login);
 router.get('/checkAuth', checkAuth);
+router.get('/logout', logout);
 
 export default router;

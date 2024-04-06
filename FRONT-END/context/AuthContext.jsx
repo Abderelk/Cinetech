@@ -22,8 +22,6 @@ export const AuthProvider = ({ children }) => {
         }
     };
 
-
-
     const login = async (userData) => {
         try {
             const { data, status } = await axios.post(URL.USER_LOGIN, userData);
@@ -39,9 +37,22 @@ export const AuthProvider = ({ children }) => {
             console.log("Erreur lors de la connexion ", error);
         }
     };
+    const logout = async () => {
+        try {
+            const { data, status } = await axios.get(URL.USER_LOGOUT);
+            if (status === 200) {
+                console.log("Déconnexion réussie", data);
+                setIsLoggedIn(false);
+            } else {
+                console.log("Erreur lors de la déconnexion");
+            }
+        } catch (error) {
+            console.log("Erreur lors de la déconnexion", error);
+        }
+    }
 
     return (
-        <AuthContext.Provider value={{ user, login, isLoggedIn, checkAuthStatus }}>
+        <AuthContext.Provider value={{ user, login, logout, isLoggedIn, checkAuthStatus }}>
             {children}
         </AuthContext.Provider>
     );

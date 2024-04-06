@@ -18,7 +18,17 @@ export const login = async (req, res) => {
             env.token,
         )
         const { password, ...Utilisateur } = user._doc
-        res.cookie('token : ', token, { httpOnly: true, maxAge: 1000 * 60 * 60 }).status(200).json(Utilisateur)
+        res.cookie('token', token, { httpOnly: true, maxAge: 1000 * 60 * 60 }).status(200).json(Utilisateur)
+    } catch (error) {
+        console.log(error);
+    }
+}
+
+export const logout = async (req, res) => {
+    try {
+        res.clearCookie('token')
+        console.log(req.headers.cookie)
+        res.status(200).json({ message: 'Déconnexion réussie' });
     } catch (error) {
         console.log(error);
     }
@@ -43,7 +53,7 @@ export const checkAuth = async (req, res) => {
     try {
         // Vérifier si des cookies sont présents dans les en-têtes de la requête
         if (req.headers.cookie) {
-            const token = req.headers.cookie.split(':=')[1];
+            const token = req.headers.cookie.split('=')[1];
             const decodedToken = jwt.verify(token, env.token);
             console.log(decodedToken)
             const expDate = new Date(decodedToken.exp * 1000);
