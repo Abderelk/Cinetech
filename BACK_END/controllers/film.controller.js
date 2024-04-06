@@ -74,6 +74,7 @@ export const synchronizeFilms = async () => {
                 }
             }
         });
+
         // Supprimez les films qui existent dans la base de données mais pas dans le fichier Excel
         localStorageFilms.forEach(async localStorageFilm => {
             const correspondingId = transformedData.find(film => film._id === localStorageFilm._id);
@@ -99,17 +100,6 @@ export const getFilms = async (req, res) => {
     }
 };
 
-// fonction pour récupérer un film par son id
-export const getFilmById = async (req, res) => {
-    try {
-        const film = await Film.findById(req.params.id);
-        console.log(Film.findById({}))
-        res.json(film);
-    } catch (error) {
-        console.log(error);
-        res.status(500).json({ message: "Erreur lors de la récupération du film" });
-    }
-};
 
 export const deleteFilmById = async (req, res) => {
     try {

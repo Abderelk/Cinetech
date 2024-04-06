@@ -78,3 +78,18 @@ button:focus-visible {
   padding: 20px;
   margin: 20px;
 }
+
+.pagination {
+  display: flex;
+  justify-content: space-between;
+
+}
+
+.pagination li {
+  list-style: none;
+}
+
+.pagination a {
+  color: #FFF;
+  cursor: pointer;
+}

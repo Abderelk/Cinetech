@@ -1,5 +1,6 @@
 import mongoose from "mongoose";
 
+const cinetechDb = mongoose.connection.useDb("cinetech");
 
 const filmSchema = new mongoose.Schema(
     {
@@ -14,5 +15,5 @@ const filmSchema = new mongoose.Schema(
         synopsis: { type: String, required: false },
     }
 )
-const Film = mongoose.model("Film", filmSchema)
+const Film = cinetechDb.model("Film", filmSchema)
 export default Film     

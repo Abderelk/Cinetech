@@ -13,7 +13,7 @@ export const filmSlice = createSlice({
         fetchDataSuccess: (state, action) => {
             state.loading = false;
             state.data = action.payload;
-            state.error = false; // Assurez-vous de réinitialiser l'erreur à false en cas de succès
+            state.error = false; 
         },
         fetchDataFailure: (state) => {
             state.loading = false;
