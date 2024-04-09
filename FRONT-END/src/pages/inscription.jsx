@@ -1,27 +1,19 @@
 
 // login.jsx
-import React, { useState, useEffect } from 'react';
-import { useNavigate, Link } from 'react-router-dom';
-import axios from 'axios';
-import { URL } from '../../constant/api';
+import React, { useState, useContext } from 'react';
+import { Link } from 'react-router-dom';
+import { AuthContext } from '../../context/AuthContext';
+import { useEffect } from 'react';
 const Inscription = () => {
-    const [email, setEmail] = useState("")
-    const [username, setUsername] = useState("")
-    const [password, setPassword] = useState("")
-    const [city, setCity] = useState("")
+    const [newUser, setNewUser] = useState([])
+    console.log(newUser)
 
+    const { signIn } = useContext(AuthContext);
 
-    const navigate = useNavigate()
-    const signIn = async (event) => {
-        event.preventDefault()
+    const inscription = async (e) => {
+        e.preventDefault()
         try {
-            const { data, status } = await axios.post(URL.USER_SIGNUP, { email, username, password, city })
-            if (status === 201) {
-                console.log("inscription réussie", data)
-                navigate('/login')
-            } else {
-                console.log('erreur lors de l\'inscription')
-            }
+            await signIn(newUser);
         } catch (error) {
             console.log("erreur lors de l'inscription", error)
         }
@@ -29,34 +21,30 @@ const Inscription = () => {
     return (
         <div>
             <h1>Inscription</h1>
-            <form action="" method="post" onSubmit={signIn}>
+            <form action="" method="post" onSubmit={inscription}>
                 <label htmlFor="">Email</label>
                 <input type="email"
                     name="email"
                     id="email"
-                    value={email}
-                    onChange={(e) => setEmail(e.target.value)}
+                    onChange={(e) => setNewUser({ ...newUser, email: e.target.value })}
                 />
                 <label htmlFor="">username</label>
                 <input type="username"
                     name="username"
                     id="username"
-                    value={username}
-                    onChange={(e) => setUsername(e.target.value)}
+                    onChange={(e) => setNewUser({ ...newUser, username: e.target.value })}
                 />
                 <label htmlFor="">password</label>
                 <input type="password"
                     name="password"
                     id="password"
-                    value={password}
-                    onChange={(e) => setPassword(e.target.value)}
+                    onChange={(e) => setNewUser({ ...newUser, password: e.target.value })}
                 />
                 <label htmlFor="">city</label>
                 <input type="text"
                     name="city"
                     id="city"
-                    value={city}
-                    onChange={(e) => setCity(e.target.value)}
+                    onChange={(e) => setNewUser({ ...newUser, city: e.target.value })}
                 />
                 <button type='submit'>Valider</button>
             </form>

@@ -1,7 +1,7 @@
 import mongoose from "mongoose";
-
+// on spécifie quel dbb on veut utilisé
 const cinetechDb = mongoose.connection.useDb("cinetech");
-
+// on fait le schema pour les films
 const filmSchema = new mongoose.Schema(
     {
         _id: { type: Number, required: true, },
@@ -15,5 +15,6 @@ const filmSchema = new mongoose.Schema(
         synopsis: { type: String, required: false },
     }
 )
+
 const Film = cinetechDb.model("Film", filmSchema)
 export default Film     

@@ -1,2 +1,4 @@
+# permet d'ignorer les fichiers .env et node_modules(.env contient les informations de connexion à la base de données ainsi que la clé pour le token)
+# node_modules contient les dépendances du projet et est donc inutile de les envoyer sur github
 .env
 node_modules

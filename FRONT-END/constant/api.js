@@ -1,3 +1,4 @@
+// Tout les URL de l'API sont définis ici, ce qui permet de les modifier facilement et de les réutiliser dans tout le projet.
 export const URL = {
     USER_SIGNUP: "http://localhost:8080/api/user/signup",
     USER_GET: "http://localhost:8080/api/user/userList",
@@ -8,5 +9,4 @@ export const URL = {
     FILM_IMPORT: "http://localhost:8080/api/film/import",
     FILM_GET: "http://localhost:8080/api/film/films",
     FILM_DELETE: "http://localhost:8080/api/film/film/",
-
 }

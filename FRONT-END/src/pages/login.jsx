@@ -3,9 +3,13 @@ import React, { useState, useContext } from 'react';
 import { Link } from 'react-router-dom';
 import { AuthContext } from '../../context/AuthContext';
 import { useEffect } from 'react';
+
+
+
+
 const Login = () => {
 
-    const { login, logout, isLoggedIn, checkAuthStatus } = useContext(AuthContext);
+    const { login, checkAuthStatus } = useContext(AuthContext);
     const [user, setUser] = useState([]);
 
     const connexion = async (e) => {
@@ -17,17 +21,7 @@ const Login = () => {
         }
     };
 
-    const deconnexion = async (e) => {
-        e.preventDefault();
-        try {
-            await logout();
-        }
-        catch (error) {
-            console.error('Erreur lors de la déconnexion', error);
-        }
 
-
-    }
     useEffect(() => {
         checkAuthStatus();
     }, []);
@@ -39,7 +33,8 @@ const Login = () => {
             <Link to="/inscription">Inscription</Link>
 
             <h1>Login</h1>
-            <form onSubmit={isLoggedIn ? deconnexion : connexion}>
+
+            <form onSubmit={connexion}>
                 <label htmlFor="email">Email</label>
                 <input
                     type="email"
@@ -59,7 +54,7 @@ const Login = () => {
                     required
                 />
                 <div className='password-error'></div>
-                <button type="submit">{isLoggedIn ? "Se déconnecter" : "Se connecter"}</button>
+                <button type="submit">Connexion</button>
             </form>
         </div >
     );

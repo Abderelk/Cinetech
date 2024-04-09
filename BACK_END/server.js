@@ -14,20 +14,16 @@ const app = express();
 // port
 const PORT = env.port || 8080;
 
-// database mongoose
-
+// connexion à ma dbb cinetech
 mongoose
-    // connexion à ma dbb cinetech
     .connect(env.mongoURI, { dbName: "cinetech" })
     .then(() => console.log("connexion à la dbb cinetech mongoDB réussie !"))
     .catch(error => console.log(error));
-
+// connexion à ma dbb userCinetech
 mongoose
-    // connexion à ma dbb userCinetech
     .connect(env.mongoURI, { dbName: "userCinetech" })
     .then(() => console.log("connexion à la base de données userCinetech mongoDB réussie !"))
     .catch(error => console.log(error));
-
 
 // middleware
 app.use(express.json());
@@ -38,14 +34,15 @@ app.use(cors({ origin: PORT, credentials: true }));
 app.use('/api/film', filmRouter);
 app.use('/api/user', userRouter);
 
-// syncronisation
+// utilisation de chokidar pour détecter les changements dans le fichier film.xlsx(à chaque nouvel enregistrement dans le fichier film.xlsx qu'il y aie un changement ou non on est informé)
 const watcher = chokidar.watch("film.xlsx", { persistent: true });
 watcher.on("change", async (path) => {
     console.log(`${path} has been changed`);
+    // utilisation de la fonction synchronizeFilms présente dans mon controller pour synchroniser les films
     synchronizeFilms();
 });
-// server
 
+// server
 app.listen(PORT, () => {
     console.log(`Serveur démarré sur le port ${PORT}`);
 });

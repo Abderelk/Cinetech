@@ -1,8 +1,8 @@
 import mongoose from "mongoose";
 import mongooseUniqueValidator from "mongoose-unique-validator";
-// spécification de la dbb à utiliser
+// on specifie la dbb que l'on souhaite utiliser
 const userCinetechDb = mongoose.connection.useDb("userCinetech");
-// création du schéma user
+// on créer un shéma user
 const userSchema = mongoose.Schema(
     {
         email: {
@@ -18,11 +18,11 @@ const userSchema = mongoose.Schema(
         },
         password: {
             type: String,
-            required: [true, "Password is required"],
+            required: true,
         },
         city: {
             type: String,
-            required: [true, "city is required"]
+            required: true,
         },
     }
 )
