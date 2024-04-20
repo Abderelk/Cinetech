@@ -3,7 +3,6 @@
 import React, { useState, useContext } from 'react';
 import { Link } from 'react-router-dom';
 import { AuthContext } from '../../context/AuthContext';
-import { useEffect } from 'react';
 const Inscription = () => {
     const [newUser, setNewUser] = useState([])
     console.log(newUser)

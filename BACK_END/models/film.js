@@ -5,7 +5,7 @@ const cinetechDb = mongoose.connection.useDb("cinetech");
 const filmSchema = new mongoose.Schema(
     {
         _id: { type: Number, required: true, },
-        title: { type: String, required: false, unique: true },
+        title: { type: String, required: true, unique: true },
         originalTitle: { type: String, required: false, unique: true },
         director: { type: String, required: false },
         year: { type: Number, required: false },

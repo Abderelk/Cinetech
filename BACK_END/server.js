@@ -2,13 +2,14 @@
 import express from "express";
 import { env } from "./config/index.js";
 import mongoose from "mongoose";
+// importation de chokidar pour détecter les changements dans le fichier film.xlsx
 import chokidar from "chokidar";
 import cors from "cors";
-import { synchronizeFilms } from "./controllers/film.controller.js"
+import { synchronizeFilms } from "./controllers/film.js"
 import cookieParser from "cookie-parser";
 // router
-import filmRouter from "./router/film.router.js";
-import userRouter from "./router/user.router.js";
+import filmRouter from "./router/film.js";
+import userRouter from "./router/user.js";
 // app express
 const app = express();
 // port

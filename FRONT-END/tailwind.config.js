@@ -18,6 +18,7 @@ export default {
       'red': 'rgb(229, 8, 21)',
       'white': '#f9f9f9',
       'black': '#111',
+      'gray': '#9B9B9B',
     },
     borderColor: {
       'black': '#111',

@@ -24,8 +24,21 @@ const userSchema = mongoose.Schema(
             type: String,
             required: true,
         },
+        favoris: {
+            type: Array,
+            required: false,
+        },
+        aVoir: {
+            type: Array,
+            required: false,
+        },
+        dejaVu: {
+            type: Array,
+            required: false,
+        }
     }
 )
+
 // ajout du plugin mongoose-unique-validator
 userSchema.plugin(mongooseUniqueValidator)
 

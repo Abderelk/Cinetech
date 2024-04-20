@@ -1,4 +1,4 @@
-import React, { createContext, useState } from 'react';
+import React, { createContext, useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
 import { URL } from "../constant/api";
@@ -8,8 +8,9 @@ export const AuthContext = createContext();
 
 export const AuthProvider = ({ children }) => {
     // initialisation de l'état de connexion
-    const [isLoggedIn, setIsLoggedIn] = useState(false);
+    const [isLoggedIn, setIsLoggedIn] = useState(true);
     const navigate = useNavigate();
+    const [user, setUser] = useState("")
     // fonctions pour s'inscrire
     const signIn = async (newUser) => {
         try {
@@ -32,7 +33,7 @@ export const AuthProvider = ({ children }) => {
             if (status === 200) {
                 console.log("Connexion réussie", data);
                 navigate('/');
-                setIsLoggedIn(true);
+                checkAuthStatus();
             } else {
                 console.log("Erreur lors de la connexion");
             }
@@ -41,11 +42,14 @@ export const AuthProvider = ({ children }) => {
         }
     };
 
+
     // fonction pour checker la connexion
     const checkAuthStatus = async () => {
         try {
             const response = await axios.get(URL.USER_CHECK_AUTH);
             setIsLoggedIn(response.data.isLoggedIn);
+            console.log(response.data)
+            setUser(response.data.username)
         } catch (error) {
             console.error("Erreur lors de la vérification du statut d'authentification", error);
         }
@@ -56,7 +60,7 @@ export const AuthProvider = ({ children }) => {
             const { data, status } = await axios.get(URL.USER_LOGOUT);
             if (status === 200) {
                 console.log("Déconnexion réussie", data);
-                setIsLoggedIn(false);
+                checkAuthStatus();
             } else {
                 console.log("Erreur lors de la déconnexion");
             }
@@ -65,9 +69,11 @@ export const AuthProvider = ({ children }) => {
         }
     }
 
+
+
     return (
         // 
-        <AuthContext.Provider value={{ login, logout, isLoggedIn, checkAuthStatus, signIn }}>
+        <AuthContext.Provider value={{ login, logout, isLoggedIn, checkAuthStatus, signIn, user }}>
             {children}
         </AuthContext.Provider>
     );

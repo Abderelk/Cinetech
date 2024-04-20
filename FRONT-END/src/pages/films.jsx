@@ -1,16 +1,28 @@
 import React, { useState, useEffect, useContext } from 'react';
+// lien des pages et requêtes API
+import { URL } from '../../constant/api';
 import { Link } from 'react-router-dom';
+import axios from 'axios';
+// redux
 import { useDispatch, useSelector } from 'react-redux';
 import { fetchDataSuccess, fetchDataFailure } from '../../redux/film.reducer';
-import { URL } from '../../constant/api';
-import axios from 'axios';
-import LoadingSpinner from '../components/loadingSpinner';
-import ReactPaginate from 'react-paginate';
+// contexte d'authentification
 import { AuthContext } from '../../context/AuthContext';
+// contexte utilisateur
+import { UserContext } from '../../context/UserContext';
+// chargement de pages
+import LoadingSpinner from '../components/loadingSpinner';
+// pagination
+import ReactPaginate from 'react-paginate';
+// footer
+import footer from '../components/footer';
+
 
 const Film = () => {
     // importation des fonctions et états du contexte d'authentification
-    const { logout, isLoggedIn, checkAuthStatus } = useContext(AuthContext);
+    const { logout, isLoggedIn, checkAuthStatus, user } = useContext(AuthContext);
+    // importation des fonctions et états du contexte utilisateur
+    const { addFavoris, addAVoir, addVues } = useContext(UserContext);
     // redux
     const dispatch = useDispatch();
     const store = useSelector(state => state.film.data);
@@ -18,7 +30,8 @@ const Film = () => {
     const [Id, setId] = useState("");
     // pagination
     const [currentPage, setCurrentPage] = useState(0);
-    const itemsPerPage = 5;
+    const itemsPerPage = 9;
+    // fonctions pour afficher les films sur la page
 
     useEffect(() => {
         const fetchFilms = async () => {
@@ -38,37 +51,63 @@ const Film = () => {
         };
         fetchFilms();
     }, [dispatch]);
-
+    // fonctions pour afficher les films sur la page
     const handleSubmit = async (event) => {
         event.preventDefault();
         setId(event.target.setId.value);
     };
+    const oneFilm = store[Id - 1];
 
+    // fonctions pour afficher les films de chaque page (pagination)
     const handlePageClick = ({ selected }) => {
         setCurrentPage(selected);
     };
-
-    // Calculate pagination offsets
+    // calculs des films à afficher par page
     const startIndex = currentPage * itemsPerPage;
     const endIndex = startIndex + itemsPerPage;
-
-    // Slice the store array based on current page
     const currentItems = store.slice(startIndex, endIndex);
-
-    const oneFilm = store[Id - 1];
+    //
 
     useEffect(() => {
         checkAuthStatus();
     }, []);
 
+    const handleAddFavoris = async (event, item) => {
+        event.preventDefault();
+        try {
+            addFavoris(item);
+            console.log(item, user)
+        } catch (error) {
+            console.log(error)
+        }
+    }
+    const handleAddAVoir = async (event, item) => {
+        event.preventDefault();
+        try {
+            addAVoir(item);
+            console.log(item, user)
+        } catch (error) {
+            console.log(error)
+        }
+    }
+    const handleAddVues = async (event, item) => {
+        event.preventDefault();
+        try {
+            addVues(item);
+            console.log(item, user)
+        } catch (error) {
+            console.log(error)
+        }
+    }
 
     return (
         <div className='px-20 py-2' >
+            {/* messaged de bienvenue */}
+            {user && user !== "" && <h1 className='text-red text-2xl'>Bienvenue {user}</h1>}
+            {/* header */}
             <header className='flex justify-between items-center mb-10'>
                 <div className='flex items-center'>
-
-                    <h1 className='text-red px-3 py-2 text-3xl'>Cineteck</h1>
-
+                    <h1 className='text-red px-3 py-2 text-2xl'>Cineteck</h1>
                     {isLoggedIn && (
                         <nav className='flex items-center'>
                             <ul className='flex flex-row'>
@@ -111,10 +150,11 @@ const Film = () => {
 
                 </div>
             </header>
+            {/* main */}
             <main>
                 {
                     oneFilm && oneFilm._id &&
-                    <div className='films' key={oneFilm._id}>
+                    <div className='bg-gray rounded-md p-5 m-3' key={oneFilm._id}>
                         <p >{oneFilm._id}</p>
                         <p>{oneFilm.title}</p>
                         <p>{oneFilm.originalTitle}</p>
@@ -127,38 +167,50 @@ const Film = () => {
                 }
 
                 {/* Display current page items */}
-                <h2 className="text-3xl font-bold border-b-2 border-red">Tous les films</h2>
+                <h2 className="text-3xl font-bold border-b-2 border-red inline-block">Tous les films</h2>
                 {
-                    currentItems && currentItems.length > 0 ? currentItems.map((item, index) => (
-                        <div className='films' key={index}>
-                            <p>{item._id}</p>
-                            <p>{item.title}</p>
-                            <p>{item.originalTitle}</p>
-                            <p>{item.director}</p>
-                            <p>{item.year}</p>
-                            <p>{item.nationality}</p>
-                            <p>{item.duration}</p>
-                            <p>{item.genre}</p>
-                            <p>{item.synopsis}</p>
-                        </div>
-                    )) :
+                    currentItems && currentItems.length > 0 ?
+                        (
+                            <div className='grid grid-cols-3 gap-4'>
+
+                                {currentItems.map((item, index) => (
+
+                                    <div className='bg-gray rounded-md p-5 m-3' key={index}>
+                                        {/*  bouton pour ajouter aux favoris */}
+                                        <button onClick={(event) => handleAddFavoris(event, item._id)}>Favoris</button>
+                                        <button onClick={(event) => handleAddVues(event, item._id)}>Vues</button>
+                                        <button onClick={(event) => handleAddAVoir(event, item._id)}>A Voir</button>
+
+                                        <p>{item._id}</p>
+                                        <p>{item.title}</p>
+                                        <p>{item.originalTitle}</p>
+                                        <p>{item.director}</p>
+                                        <p>{item.year}</p>
+                                        <p>{item.nationality}</p>
+                                        <p>{item.duration}</p>
+                                        <p>{item.genre}</p>
+                                        <p>{item.synopsis}</p>
+                                    </div>
+                                ))}
+                            </div>
+                        ) :
                         <LoadingSpinner />
                 }
 
                 {/* Pagination */}
+
                 <ReactPaginate
-                    breakLabel="..."
-                    nextLabel="suivant >"
+                    nextLabel=" >"
                     onPageChange={handlePageClick}
-                    pageRangeDisplayed={3}
+                    pageRangeDisplayed={2}
                     pageCount={Math.ceil(store.length / itemsPerPage)}
-                    previousLabel="< précédent"
+                    previousLabel="< "
                     renderOnZeroPageCount={null}
-                    className='pagination'
+                    className='flex justify-between items-center mt-5 mx-auto w-1/2'
                 />
-            </main>
 
-
+            </main >
+            {footer()}
         </div >
     );
 };

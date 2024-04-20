@@ -1,7 +1,7 @@
 // On importe la bibliothèque xlsx
 import xlsx from "xlsx";
 // On importe le model film 
-import Film from "../models/film.model.js";
+import Film from "../models/film.js";
 
 // Fonction pour transformer les données du fichier Excel en données de film 
 // on va réutiliser cette fonction pour importer les films du fichier excel et pour synchroniser le fichier excel avec la dbb
@@ -38,6 +38,9 @@ export const importFilms = async (req, res) => {
         await Film.deleteMany();
         // on insère les films du fichier Excel dans la dbb
         await Film.insertMany(transformedData);
+        console.log("Importation réussie de films importés");
+
+
         // on r'envoie un message de succes ainsi qu'un code de statut 201
         res.status(201).json({ message: "Importation réussie" });
         // on attrape les erreurs et on les affiche avec un code de statut 500
@@ -108,7 +111,7 @@ export const synchronizeFilms = async () => {
 // fonction pour récupérer la liste des films
 export const getFilms = async (req, res) => {
     try {
-        const films = await Film.find({});
+        const films = await Film.find({}).sort({ _id: 1 });
         res.json(films);
     } catch (error) {
         console.log(error);
