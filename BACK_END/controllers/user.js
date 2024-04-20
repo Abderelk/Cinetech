@@ -129,24 +129,20 @@ export const addVue = async (req, res) => {
 
             if (username) {
                 const user = await userModel.findOne({ username: username })
-                const filmAVoir = user.aVoir
 
-                if (user.dejaVu.includes(filmId)) {
-                    res.status(400).json("Film déjà dans les films vus")
-                    console.log("échecs")
+                if (user.dejaVu.includes(filmId) && user.aVoir.includes(filmId)) {
+                    await userModel.findOneAndUpdate({ username: username }, { $pull: { aVoir: filmId } })
+                    res.status(201).json("Film déjà dans les films vus mais supprimés des films à voir")
                 }
 
-                else if
-                    (filmAVoir.includes(filmId)) {
+                else if (!user.dejaVu.includes(filmId) && user.aVoir.includes(filmId)) {
                     await userModel.findOneAndUpdate({ username: username }, { $push: { dejaVu: filmId }, $pull: { aVoir: filmId } })
-                    res.status(201).json("Film ajouté et retiré des films à voir")
+                    res.status(201).json("Film ajouté à la rubrique des films vues et retiré des films à voir")
                 }
 
                 else {
                     await userModel.findOneAndUpdate({ username: username }, { $push: { dejaVu: filmId } })
-                    res.status(201).json("Film ajouté")
-
-
+                    res.status(201).json("Film ajouté aux films vus")
                 }
             }
             else {

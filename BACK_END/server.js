@@ -15,17 +15,11 @@ const app = express();
 // port
 const PORT = env.port || 8080;
 
-// connexion à ma dbb cinetech
+// connexion à mon cluster 
 mongoose
-    .connect(env.mongoURI, { dbName: "cinetech" })
-    .then(() => console.log("connexion à la dbb cinetech mongoDB réussie !"))
+    .connect(env.mongoURI)
+    .then(() => console.log("connexion au cluster mongoDB réussie !"))
     .catch(error => console.log(error));
-// connexion à ma dbb userCinetech
-mongoose
-    .connect(env.mongoURI, { dbName: "userCinetech" })
-    .then(() => console.log("connexion à la base de données userCinetech mongoDB réussie !"))
-    .catch(error => console.log(error));
-
 // middleware
 app.use(express.json());
 app.use(cookieParser());
