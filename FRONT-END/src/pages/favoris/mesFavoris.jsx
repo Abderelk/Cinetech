@@ -1,10 +1,10 @@
 import React, { useState } from "react";
-import { Link } from "react-router-dom";
-import { AuthContext } from '../../context/AuthContext'
+import { AuthContext } from '../../../context/AuthContext'
 import { useEffect, useContext } from "react";
 import axios from "axios";
-import { URL } from "../../constant/api";
+import { URL } from "../../../constant/api";
 import { FaDeleteLeft } from "react-icons/fa6";
+import Film from "../../components/film/film";
 const MesFavoris = () => {
 
     const { logout, isLoggedIn, checkAuthStatus, user } = useContext(AuthContext);
@@ -47,7 +47,10 @@ const MesFavoris = () => {
             console.log(error);
         }
     }
-
+    const [selectedFilm, setSelectedFilm] = useState(null);
+    const handleToggleSynopsis = (filmId) => {
+        setSelectedFilm(selectedFilm === filmId ? null : filmId);
+    };
 
     return (
         <div className='px-20 py-2'>
@@ -59,20 +62,9 @@ const MesFavoris = () => {
                 {
                     favoris.length > 0 ? (
                         <div className='grid grid-cols-3 gap-4'>
-                            {favoris.map((item, index) => (
-                                <div className='bg-gray rounded-md p-5 m-3 ' key={index}>
-                                    <div className="flex justify-end space-x-4">
-                                        <button onClick={(event) => handleRemoveFilm(event, item._id)} className="text-2xl hover:bg-black hover:bg-opacity-50 hover:rounded-md p-2"><FaDeleteLeft /></button>
-                                    </div>
-                                    <p>{item._id}</p>
-                                    <p>{item.title}</p>
-                                    <p>{item.originalTitle}</p>
-                                    <p>{item.director}</p>
-                                    <p>{item.year}</p>
-                                    <p>{item.nationality}</p>
-                                    <p>{item.duration}</p>
-                                    <p>{item.genre}</p>
-                                    <p>{item.synopsis}</p>
+                            {favoris.map((oneFilm, index) => (
+                                <div className='bg-gray rounded-md p-5 m-3 hover:scale-105' key={oneFilm._id}>
+                                    <Film oneFilm={oneFilm} selectedFilm={selectedFilm} handleRemoveFilm={handleRemoveFilm} handleToggleSynopsis={handleToggleSynopsis} />
                                 </div>
                             ))}
                         </div>

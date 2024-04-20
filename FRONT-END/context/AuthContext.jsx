@@ -48,7 +48,6 @@ export const AuthProvider = ({ children }) => {
         try {
             const response = await axios.get(URL.USER_CHECK_AUTH);
             setIsLoggedIn(response.data.isLoggedIn);
-            console.log(response.data)
             setUser(response.data.username)
         } catch (error) {
             console.error("Erreur lors de la vérification du statut d'authentification", error);

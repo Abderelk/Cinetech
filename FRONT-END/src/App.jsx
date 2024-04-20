@@ -1,16 +1,15 @@
-import { useContext } from 'react'
-import React from 'react';
+import React, { useContext } from 'react'
 import { Route, Routes } from 'react-router-dom';
-import Login from './pages/login';
-import Inscription from './pages/inscription';
-import Home from './pages/films';
-import MesFavoris from './pages/mesFavoris';
-import AVoir from './pages/aVoir';
-import DejaVues from './pages/dejaVues';
-import HelloWorld from './pages/helloWorld';
+import Login from './pages/login/login';
+import Inscription from './pages/inscription/inscription';
+import Home from './pages/home/home';
+import MesFavoris from './pages/favoris/mesFavoris';
+import AVoir from './pages/aVoir/aVoir';
+import DejaVues from './pages/vue/dejaVue';
+import HelloWorld from './pages/helloWorld/helloWorld';
 import AuthMiddleware from '../middleware/AuthMiddleware';
 import { AuthContext } from '../context/AuthContext';
-import Loyout from './components/loyout/loyout';
+import Layout from './components/layout/layout';
 
 function App() {
 
@@ -18,7 +17,7 @@ function App() {
 
   return (
     <Routes>
-      <Route path="/" element={<Loyout />} >
+      <Route path="/" element={<Layout />} >
         <Route index element={<Home />} />
         <Route path="/helloWorld" element={<HelloWorld />} />
         <Route path="/inscription" element={<AuthMiddleware isAuthenticated={!isLoggedIn}>< Inscription /></AuthMiddleware>} />

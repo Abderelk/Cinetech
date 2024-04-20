@@ -1,30 +1,29 @@
 import React, { useState, useEffect, useContext } from 'react';
 // lien des pages et requêtes API
-import { URL } from '../../constant/api';
+import { URL } from '../../../constant/api.js';
 import axios from 'axios';
 // redux
 import { useDispatch, useSelector } from 'react-redux';
-import { fetchDataSuccess, fetchDataFailure } from '../../redux/film.reducer';
+import { fetchDataSuccess, fetchDataFailure } from '../../../redux/film.reducer.js';
 // contexte d'authentification
-import { AuthContext } from '../../context/AuthContext';
+import { AuthContext } from '../../../context/AuthContext.jsx';
 // contexte utilisateur
-import { UserContext } from '../../context/UserContext';
+import { UserContext } from '../../../context/UserContext.jsx';
 // chargement de pages
-import LoadingSpinner from '../components/loading/loadingSpinner';
+import LoadingSpinner from '../../components/loading/loadingSpinner.jsx';
 // film
-import Film from '../components/film/film.jsx';
+import Film from '../../components/film/film.jsx';
 // icones
 
 const Home = () => {
     // importation des fonctions et états du contexte d'authentification
-    const { checkAuthStatus } = useContext(AuthContext);
+    const { checkAuthStatus, isLoggedIn } = useContext(AuthContext);
     // importation des fonctions et états du contexte utilisateur
     const { addFavoris, addAVoir, addVues } = useContext(UserContext);
     // redux
     const dispatch = useDispatch();
     const store = useSelector(state => state.film.data);
-    // id pour la recherche de film par id
-    const [Id, setId] = useState("");
+
     useEffect(() => {
         const fetchFilms = async () => {
             try {
@@ -43,7 +42,9 @@ const Home = () => {
         };
         fetchFilms();
     }, [dispatch]);
-    // fonctions pour afficher les films sur la page
+    // id pour la recherche de film par id
+    const [Id, setId] = useState("");
+    // fonctions pour afficher un film recherché sur la page
     const handleSubmit = async (event) => {
         event.preventDefault();
         setId(event.target.setId.value);
@@ -103,7 +104,7 @@ const Home = () => {
                         {store.length === 0 && <LoadingSpinner />}
                         {store.map((oneFilm, index) => (
                             <div className='bg-gray rounded-md p-5 m-3 hover:scale-105' key={oneFilm._id}>
-                                <Film oneFilm={oneFilm} selectedFilm={selectedFilm} handleAddAVoir={handleAddAVoir} handleAddFavoris={handleAddFavoris} handleAddVues={handleAddVues} handleToggleSynopsis={handleToggleSynopsis} />
+                                <Film oneFilm={oneFilm} selectedFilm={selectedFilm} handleAddAVoir={handleAddAVoir} handleAddFavoris={handleAddFavoris} handleAddVues={handleAddVues} handleToggleSynopsis={handleToggleSynopsis} isLoggedIn={isLoggedIn} />
                             </div>
                         ))}
                     </div>

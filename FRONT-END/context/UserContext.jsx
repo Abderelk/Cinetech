@@ -24,7 +24,6 @@ export const UserProvider = ({ children }) => {
     const addVues = async (filmId) => {
         try {
             const { status, data } = await Axios.post(URL.ADD_VUES, { filmId })
-            console.log(status, data)
             if (status === 201) {
                 console.log("films ajoutées à la rubirique vues", data)
             }
@@ -39,7 +38,6 @@ export const UserProvider = ({ children }) => {
     const addAVoir = async (filmId) => {
         try {
             const { status, data } = await Axios.post(URL.ADD_AVOIR, { filmId })
-            console.log(status, data)
             if (status === 201) {
                 console.log("films ajoutées à la rubirique à voir", data)
             }
@@ -68,7 +66,6 @@ export const UserProvider = ({ children }) => {
     const removeVues = async (filmId) => {
         try {
             const { status, data } = await Axios.post(URL.REMOVE_VUES, { filmId })
-            console.log(status, data)
             if (status === 200) {
                 console.log("films supprimées de la rubirique vues", data)
             }
@@ -83,7 +80,6 @@ export const UserProvider = ({ children }) => {
     const removeAVoir = async (filmId) => {
         try {
             const { status, data } = await Axios.post(URL.REMOVE_AVOIR, { filmId })
-            console.log(status, data)
             if (status === 200) {
                 console.log("films supprimées de la rubirique à voir", data)
             }

@@ -1,9 +1,8 @@
 import React, { useState } from "react";
-import { Link } from "react-router-dom";
-import { AuthContext } from '../../context/AuthContext'
+import { AuthContext } from '../../../context/AuthContext'
 import { useEffect, useContext } from "react";
 import axios from "axios";
-import { URL } from "../../constant/api";
+import { URL } from "../../../constant/api";
 import { FaDeleteLeft } from "react-icons/fa6";
 
 const MesaVoir = () => {
