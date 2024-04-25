@@ -8,15 +8,15 @@ import { useState } from "react";
 import { FilmContext } from "../../../context/FilmContext";
 
 const Header = () => {
-  const { searchFilmById } = useContext(FilmContext);
+  const { searchFilmByTerm } = useContext(FilmContext);
 
   const { isLoggedIn, logout } = useContext(AuthContext);
   const isHomePage = location.pathname === "/";
-  const [id, setId] = useState("");
-
+  const [term, setTerm] = useState("");
   const handleSubmit = async (event) => {
+    
     event.preventDefault();
-    searchFilmById(id);
+    searchFilmByTerm(term);
   };
   return (
     <header className="flex justify-between oneFilms-center mb-10 px-20 py-5">
@@ -72,9 +72,7 @@ const Header = () => {
           <form onSubmit={handleSubmit} className="flex oneFilms-center mr-2">
             <input
               type="text"
-              name="setId"
-              id="setId"
-              onChange={(event) => setId(event.target.value)}
+              onChange={(event) => setTerm(event.target.value)}
               placeholder="Rechercher un film..."
               className="rounded-l-md pl-3 py-2 focus:outline-none bg-black border border-r-0 border-white"
             />

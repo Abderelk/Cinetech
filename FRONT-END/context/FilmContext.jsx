@@ -4,12 +4,23 @@ import { URL } from "../constant/api";
 axios.defaults.withCredentials = true;
 
 export const FilmContext = createContext();
+// fonctins pour normaliser les chaines de caractères
+function normalizeString(str) {
+  if (str === "" || typeof str === "undefined" || str === null) {
+    return "";
+  }
 
-
+  return `${str}`
+    ?.toLowerCase()
+    ?.normalize("NFD")
+    ?.replace(/[\u0300-\u036f]/g, "");
+}
+// provider pour les films
 export const FilmProvider = ({ children }) => {
   const [films, setFilms] = useState([]);
-  const [filmSelected, setFilmSelected] = useState(null);
+  const [filmsSelected, setFilmsSelected] = useState([]);
 
+  // fonctions pour récupérer les films
   useEffect(() => {
     const fetchFilms = async () => {
       try {
@@ -28,17 +39,26 @@ export const FilmProvider = ({ children }) => {
     fetchFilms();
   }, []);
 
-  const searchFilmById = (id) => {
-    console.log("searchFilmById", id, films);
-    return setFilmSelected(films.find((film) => film._id === Number(id)));
+  // fonctions pour rechercher un film par therme
+  const searchFilmByTerm = (term) => {
+    const termNormalized = normalizeString(term);
+    const filmsFiletered = films.filter(
+      (film) =>
+        normalizeString(film.title).includes(termNormalized) ||
+        normalizeString(film.originalTitle).includes(termNormalized) ||
+        normalizeString(film.director).includes(termNormalized) ||
+        normalizeString(film.genre).includes(termNormalized) ||
+        normalizeString(film.synopsis).includes(termNormalized)
+    );
+    return setFilmsSelected(filmsFiletered.slice(0, 5));
   };
 
   return (
     <FilmContext.Provider
       value={{
         films,
-        filmSelected,
-        searchFilmById,
+        filmsSelected,
+        searchFilmByTerm,
       }}
     >
       {children}

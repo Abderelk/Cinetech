@@ -1,13 +1,5 @@
 import React, { useState, useEffect, useContext } from "react";
 // lien des pages et requêtes API
-import { URL } from "../../../constant/api.js";
-import axios from "axios";
-// redux
-import { useDispatch, useSelector } from "react-redux";
-import {
-  fetchDataSuccess,
-  fetchDataFailure,
-} from "../../../redux/film.reducer.js";
 // contexte d'authentification
 import { AuthContext } from "../../../context/AuthContext.jsx";
 // contexte film
@@ -23,16 +15,15 @@ import Film from "../../components/film/film.jsx";
 const Home = () => {
   // importation des fonctions et états du contexte d'authentification
   const { checkAuthStatus, isLoggedIn } = useContext(AuthContext);
-  const { filmSelected, films } = useContext(FilmContext);
+  const { filmsSelected, films } = useContext(FilmContext);
   // importation des fonctions et états du contexte utilisateur
   const { addFavoris, addAVoir, addVues } = useContext(UserContext);
-
-  console.log(filmSelected);
 
   useEffect(() => {
     checkAuthStatus();
   }, []);
 
+  // fonctions pour ajouter un film à la liste des favoris, à voir ou vus
   const handleAddFavoris = async (event, oneFilm) => {
     event.preventDefault();
     try {
@@ -41,6 +32,7 @@ const Home = () => {
       console.log(error);
     }
   };
+
   const handleAddAVoir = async (event, oneFilm) => {
     event.preventDefault();
     try {
@@ -49,6 +41,7 @@ const Home = () => {
       console.log(error);
     }
   };
+
   const handleAddVues = async (event, oneFilm) => {
     event.preventDefault();
     try {
@@ -58,6 +51,7 @@ const Home = () => {
     }
   };
 
+  // fonctions pour afficher les details du film
   const [selectedFilm, setSelectedFilm] = useState(null);
   const handleToggleSynopsis = (filmId) => {
     setSelectedFilm(selectedFilm === filmId ? null : filmId);
@@ -67,21 +61,23 @@ const Home = () => {
     <div className="px-20 py-2">
       <main className="min-h-80">
         {/* Affichage du film recherché */}
-        {filmSelected && filmSelected._id && (
-          <div
-            className="bg-gray rounded-md p-5 m-3 hover:scale-105"
-            key={filmSelected._id}
-          >
-            <Film
-              oneFilm={filmSelected}
-              selectedFilm={selectedFilm}
-              handleAddAVoir={handleAddAVoir}
-              handleAddFavoris={handleAddFavoris}
-              handleAddVues={handleAddVues}
-              handleToggleSynopsis={handleToggleSynopsis}
-            />
-          </div>
-        )}
+        {filmsSelected.length > 0 &&
+          filmsSelected.map((filmSelected, index) => (
+            <div
+              className="bg-gray rounded-md p-5 m-3 hover:scale-105"
+              key={filmSelected._id}
+            >
+              <Film
+                oneFilm={filmSelected}
+                selectedFilm={selectedFilm}
+                handleAddAVoir={handleAddAVoir}
+                handleAddFavoris={handleAddFavoris}
+                handleAddVues={handleAddVues}
+                handleToggleSynopsis={handleToggleSynopsis}
+                isLoggedIn={isLoggedIn}
+              />
+            </div>
+          ))}
 
         {/* Affichage de tous les films */}
         <h2 className="text-3xl font-bold border-b-2 border-red inline-block">
