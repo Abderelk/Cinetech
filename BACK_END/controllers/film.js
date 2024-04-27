@@ -4,6 +4,8 @@ import xlsx from "xlsx";
 import Film from "../models/film.js";
 // On importe axios pour les requêtes ver
 import axios from "axios";
+// On importe dotenv pour cacher la clé d'API
+import { env } from "../config/index.js";
 
 // Fonction pour transformer les données du fichier Excel en données de film
 // on va réutiliser cette fonction pour importer les films du fichier excel et pour synchroniser le fichier excel avec la dbb
@@ -117,6 +119,7 @@ export const synchronizeFilms = async () => {
     console.log("Error during synchronization:", error);
   }
 };
+
 // fonctions pour récupérer les poster des films à partir de leur titre
 async function getPosterUrl(title, year) {
   try {
@@ -125,14 +128,10 @@ async function getPosterUrl(title, year) {
       url: `https://api.themoviedb.org/3/search/movie?query=${title
         .replaceAll(" ", "%20")
         .replaceAll("'", "%27")
-        .replaceAll(
-          "é",
-          "%C3%A9"
-        )}&include_adult=true&primary_release_year=${year}`,
+        .replaceAll("é", "%C3%A9")}&include_adult=false`,
       headers: {
         accept: "application/json",
-        Authorization:
-          "Bearer eyJhbGciOiJIUzI1NiJ9.eyJhdWQiOiIxNTRkNGEwZTBlMmYzNTVmMGZjNmMyZWM1MmFhMzAyZiIsInN1YiI6IjY2MmJmZjU3NmMxOWVhMDEyMjFlMDk0ZCIsInNjb3BlcyI6WyJhcGlfcmVhZCJdLCJ2ZXJzaW9uIjoxfQ.NNzyJFI6e0drLcFGt6WSZdmKvO3jBkPavDl8iPV21fc",
+        Authorization: env.cleApi,
       },
     };
     const response = await axios.request(options);
@@ -147,8 +146,16 @@ async function getPosterUrl(title, year) {
 
 // Fonction pour récupérer la liste des films avec les URLs des posters
 export const getFilms = async (req, res) => {
+  console.log(req.query.page);
   try {
-    const films = await Film.find({}).sort({ _id: 1 }).limit(50);
+    const page = req.query.page || 1; // Récupérer le numéro de la page depuis la requête, par défaut 1
+    const filmsPerPage = 20; // Nombre de films par page
+    const offset = (page - 1) * filmsPerPage; // Calculer l'offset
+
+    const films = await Film.find({})
+      .sort({ _id: 1 })
+      .skip(offset)
+      .limit(filmsPerPage);
 
     // Créer un tableau de promesses pour récupérer les URLs des posters de chaque film
     const getImagePromises = films.map((film) =>
@@ -175,3 +182,56 @@ export const getFilms = async (req, res) => {
     });
   }
 };
+
+// fonction pour récuérer un film par therme
+export const searchFilmByTerm = async (req, res) => {
+  try {
+    const term = req.query.term;
+    const termNormalized = normalizeString(term);
+    const films = await Film.find({});
+    const filmsFiletered = films.filter(
+      (film) =>
+        normalizeString(film.title).includes(termNormalized) ||
+        normalizeString(film.originalTitle).includes(termNormalized) ||
+        normalizeString(film.director).includes(termNormalized) ||
+        normalizeString(film.genre).includes(termNormalized) ||
+        normalizeString(film.synopsis).includes(termNormalized)
+    );
+    const getImagePromises = filmsFiletered.map((film) =>
+      getPosterUrl(film.title, film.year)
+    );
+    // Attendre que toutes les promesses soient résolues
+    const posterPaths = await Promise.all(getImagePromises);
+    // Associer chaque URL de poster au film correspondant
+    const filmsWithPosters = filmsFiletered.map((film, index) => ({
+      ...film.toObject(),
+      posterUrl: posterPaths[index] || null, // Utiliser l'URL du poster si disponible, sinon null
+    }));
+    res.json(filmsWithPosters.slice(0, 5));
+  } catch (error) {
+    console.log(`Erreur lors de la recherche des films: ${error}`);
+    res.status(500).json({ message: "Erreur lors de la recherche des films" });
+  }
+};
+
+// fonction pour compter le nombre de films dans la dbb (utilisé pour la pagination)
+export const countFilms = async (req, res) => {
+  try {
+    const count = await Film.countDocuments();
+    res.json({ count });
+  } catch (error) {
+    console.log(`Erreur lors du comptage des films: ${error}`);
+    res.status(500).json({ message: "Erreur lors du comptage des films" });
+  }
+};
+
+// fonction pour normalizer le texte
+function normalizeString(str) {
+  if (str === "" || typeof str === "undefined" || str === null) {
+    return "";
+  }
+  return `${str}`
+    ?.toLowerCase()
+    ?.normalize("NFD")
+    ?.replace(/[\u0300-\u036f]/g, "");
+}

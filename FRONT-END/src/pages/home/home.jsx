@@ -10,20 +10,25 @@ import { UserContext } from "../../../context/UserContext.jsx";
 import LoadingSpinner from "../../components/loading/loadingSpinner.jsx";
 // film
 import Film from "../../components/film/film.jsx";
-// icones
+// pagination
 
 const Home = () => {
+  // pagination
+  const [page, setPage] = useState(1);
   // importation des fonctions et états du contexte d'authentification
   const { checkAuthStatus, isLoggedIn } = useContext(AuthContext);
-  const { filmsSelected, films } = useContext(FilmContext);
+  const { filmsSelected, films, fetchFilms, filmsCount } =
+    useContext(FilmContext);
   // importation des fonctions et états du contexte utilisateur
   const { addFavoris, addAVoir, addVues } = useContext(UserContext);
 
   useEffect(() => {
     checkAuthStatus();
   }, []);
-
   // fonctions pour ajouter un film à la liste des favoris, à voir ou vus
+  useEffect(() => {
+    fetchFilms({ page });
+  }, [page]);
   const handleAddFavoris = async (event, oneFilm) => {
     event.preventDefault();
     try {
@@ -57,6 +62,85 @@ const Home = () => {
     setSelectedFilm(selectedFilm === filmId ? null : filmId);
   };
 
+  // pagination
+
+  const filmsPerPage = filmsCount;
+  const numberOfPages = Math.ceil(filmsPerPage / 20); // 20 films par page
+
+  const handlePageChange = (pageNumber) => {
+    setPage(pageNumber);
+  };
+
+  const renderPaginationButtons = () => {
+    const paginationButtons = [];
+    const firstPage = 1;
+    const lastPage = numberOfPages;
+    window.scrollTo({ top: 0, behavior: "smooth" });
+
+    paginationButtons.push(
+      <button
+        key="back"
+        onClick={() => handlePageChange(page - 1)}
+        className="bg-red text-white p-2 m-2 rounded-md"
+      >
+        &lt;
+      </button>
+    );
+    paginationButtons.push(
+      <button
+        key="first"
+        onClick={() => handlePageChange(firstPage)}
+        className=" text-white p-2 m-2 rounded-md"
+      >
+        1
+      </button>
+    );
+    paginationButtons.push(
+      <button
+        key="second"
+        onClick={() => handlePageChange(firstPage + 1)}
+        className=" text-white p-2 m-2 "
+      >
+        2
+      </button>
+    );
+
+    paginationButtons.push(
+      <p key={page} className=" text-red p-2 m-2">
+        {page}
+      </p>
+    );
+
+    paginationButtons.push(
+      <button
+        key="last - 1"
+        onClick={() => handlePageChange(lastPage - 1)}
+        className=" text-white p-2 m-2 "
+      >
+        {lastPage - 1}
+      </button>
+    );
+    paginationButtons.push(
+      <button
+        key="last"
+        onClick={() => handlePageChange(lastPage)}
+        className=" text-white p-2 m-2"
+      >
+        {lastPage}
+      </button>
+    );
+    paginationButtons.push(
+      <button
+        key="next"
+        onClick={() => handlePageChange(page + 1)}
+        className="bg-red text-white p-2 m-2 "
+      >
+        &gt;
+      </button>
+    );
+    return paginationButtons;
+  };
+
   return (
     <div className="px-20 py-2">
       <main className="min-h-80">
@@ -84,7 +168,7 @@ const Home = () => {
           Tous les films
         </h2>
         {
-          <div className="grid grid-cols-3 gap-4">
+          <div className="grid grid-cols-5 gap-4">
             {films.length === 0 && <LoadingSpinner />}
             {films.map((oneFilm, index) => (
               <div
@@ -104,6 +188,12 @@ const Home = () => {
             ))}
           </div>
         }
+        {/* pagination */}
+        <div className="flex justify-center mt-4">
+          {renderPaginationButtons()}
+        </div>
+
+        <div className="flex justify-center items-center"></div>
       </main>
     </div>
   );

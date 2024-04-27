@@ -16,9 +16,9 @@ function App() {
 
   return (
     <Routes>
+      <Route path="/helloWorld" element={<HelloWorld />} />
       <Route path="/" element={<Layout />}>
         <Route index element={<Home />} />
-        <Route path="/helloWorld" element={<HelloWorld />} />
         <Route
           path="/inscription"
           element={

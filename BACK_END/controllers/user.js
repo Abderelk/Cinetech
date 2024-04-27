@@ -7,7 +7,8 @@ import bcrypt from "bcrypt";
 import jwt from "jsonwebtoken";
 // on importe env que l'on utilise pour la valeur de notre token
 import { env } from "../config/index.js";
-
+// axios
+import axios from "axios";
 // fonctions pour s'inscrire
 export const signUp = async (req, res) => {
   try {
@@ -194,45 +195,102 @@ export const addAVoir = async (req, res) => {
     console.log(error);
   }
 };
-// fonctions pour voir les films favoris
+// fonction pour récupérer les posters des films
+async function getPosterUrl(title, year) {
+  try {
+    const options = {
+      method: "GET",
+      url: `https://api.themoviedb.org/3/search/movie?query=${title
+        .replaceAll(" ", "%20")
+        .replaceAll("'", "%27")
+        .replaceAll(
+          "é",
+          "%C3%A9"
+        )}&include_adult=true&primary_release_year=${year}`,
+      headers: {
+        accept: "application/json",
+        Authorization: env.cleApi,
+      },
+    };
+    const response = await axios.request(options);
+    const posterPath = response.data.results[0]?.poster_path; // Utilisation de l'opérateur de coalescence nulle (?.) pour vérifier si poster_path est défini
+    if (posterPath) {
+      return posterPath;
+    }
+  } catch (error) {
+    console.log(`Erreur lors de la récupération de l'image: ${error}`);
+  }
+}
+// fonction pour récupérer les films avec les posters
+const getFilmsWithPosters = async (films) => {
+  try {
+    const getImagePromises = films.map((film) =>
+      getPosterUrl(film.title, film.year)
+    );
+    const posterPaths = await Promise.all(getImagePromises);
+    const filmsWithPosters = films.map((film, index) => ({
+      ...film.toObject(),
+      posterUrl: posterPaths[index] || null,
+    }));
+    return filmsWithPosters;
+  } catch (error) {
+    throw new Error(
+      `Erreur lors de la récupération des films avec posters: ${error}`
+    );
+  }
+};
+
 export const getFavoris = async (req, res) => {
   try {
     const token = jwt.verify(req.headers.cookie.split("=")[1], env.token);
     const username = token.username;
     const user = await userModel.findOne({ username: username });
     const filmsFavoris = await filmModel.find({ _id: user.favoris });
-    console.log(filmsFavoris);
-    res.status(200).json(filmsFavoris);
+    const filmsWithPosters = await getFilmsWithPosters(filmsFavoris);
+    res.status(200).json(filmsWithPosters);
+    console.log(filmsWithPosters);
   } catch (error) {
     console.log(error);
+    res
+      .status(500)
+      .json({ message: "Erreur lors de la récupération des favoris" });
   }
 };
-// fonctions pour voir les films vues
+
 export const getVues = async (req, res) => {
   try {
     const token = jwt.verify(req.headers.cookie.split("=")[1], env.token);
     const username = token.username;
     const user = await userModel.findOne({ username: username });
     const filmsVues = await filmModel.find({ _id: user.dejaVu });
-    console.log(filmsVues);
-    res.status(200).json(filmsVues);
+    const filmsWithPosters = await getFilmsWithPosters(filmsVues);
+    res.status(200).json(filmsWithPosters);
+    console.log(filmsWithPosters);
   } catch (error) {
     console.log(error);
+    res
+      .status(500)
+      .json({ message: "Erreur lors de la récupération des films vus" });
   }
 };
-// fonctions pour voir les films à voir
+
 export const getAVoir = async (req, res) => {
   try {
     const token = jwt.verify(req.headers.cookie.split("=")[1], env.token);
     const username = token.username;
     const user = await userModel.findOne({ username: username });
     const filmsAVoir = await filmModel.find({ _id: user.aVoir });
-    console.log(filmsAVoir);
-    res.status(200).json(filmsAVoir);
+    const filmsWithPosters = await getFilmsWithPosters(filmsAVoir);
+    res.status(200).json(filmsWithPosters);
+    console.log(filmsWithPosters);
   } catch (error) {
     console.log(error);
+    res
+      .status(500)
+      .json({ message: "Erreur lors de la récupération des films à voir" });
   }
 };
+
 // fonctions pour supprimer un film des favoris
 export const removeFavoris = async (req, res) => {
   try {
