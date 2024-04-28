@@ -53,7 +53,7 @@ export const importFilms = async (_, res) => {
 export const synchronizeFilms = async () => {
   try {
     const transformedData = transformExcelData();
-    const localStorageFilms = await Film.find({});
+    const localStorageFilms = await Film.find();
     const differentIds = [];
     const idForAdd = [];
     const idForDelete = [];
