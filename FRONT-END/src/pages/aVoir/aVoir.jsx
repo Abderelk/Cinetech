@@ -3,16 +3,14 @@ import { AuthContext } from "../../../context/AuthContext";
 import { useEffect, useContext } from "react";
 import axios from "axios";
 import { URL } from "../../../constant/api";
-import { FaDeleteLeft } from "react-icons/fa6";
 import Film from "../../components/film/film";
 
 const MesaVoir = () => {
-  const { logout, isLoggedIn, checkAuthStatus, user } = useContext(AuthContext);
+  const { checkAuthStatus } = useContext(AuthContext);
   useEffect(() => {
     checkAuthStatus();
   }, []);
   const [aVoir, setAVoir] = useState([]);
-  console.log(aVoir);
   useEffect(() => {
     const fetchaVoir = async () => {
       try {
@@ -52,14 +50,13 @@ const MesaVoir = () => {
 
   return (
     <div className="px-20 py-2">
-      {/* main */}
       <main>
         <h2 className="text-3xl font-bold border-b-2 border-red inline-block">
           Mes films à voir
         </h2>
         {aVoir.length > 0 ? (
           <div className="grid grid-cols-5 gap-4">
-            {aVoir.map((oneFilm, index) => (
+            {aVoir.map((oneFilm) => (
               <div
                 className="bg-gray rounded-md p-5 m-3 hover:scale-105"
                 key={oneFilm._id}

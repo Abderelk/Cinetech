@@ -18,7 +18,6 @@ const Header = () => {
     event.preventDefault();
     searchFilmByTerm(term);
   };
-  console.log(term);
   return (
     <header className="flex justify-between oneFilms-center mb-10 px-20 py-5">
       <div className="flex items-center">

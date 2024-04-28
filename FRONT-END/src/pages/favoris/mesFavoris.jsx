@@ -3,15 +3,13 @@ import { AuthContext } from "../../../context/AuthContext";
 import { useEffect, useContext } from "react";
 import axios from "axios";
 import { URL } from "../../../constant/api";
-import { FaDeleteLeft } from "react-icons/fa6";
 import Film from "../../components/film/film";
 const MesFavoris = () => {
-  const { logout, isLoggedIn, checkAuthStatus, user } = useContext(AuthContext);
+  const { checkAuthStatus } = useContext(AuthContext);
   useEffect(() => {
     checkAuthStatus();
   }, []);
   const [favoris, setFavoris] = useState([]);
-  console.log(favoris);
 
   useEffect(() => {
     const fetchFavoris = async () => {
@@ -52,11 +50,6 @@ const MesFavoris = () => {
 
   return (
     <div className="px-20 py-2">
-      {/* messaged de bienvenue */}
-      {user && user !== "" && (
-        <h1 className="text-red text-2xl">Bienvenue {user}</h1>
-      )}
-      {/* header */}
       <main>
         <h2 className="text-3xl font-bold border-b-2 border-red inline-block">
           Mes films favoris

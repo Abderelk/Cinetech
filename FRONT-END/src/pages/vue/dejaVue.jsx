@@ -3,11 +3,10 @@ import { AuthContext } from "../../../context/AuthContext";
 import { useEffect, useContext } from "react";
 import axios from "axios";
 import { URL } from "../../../constant/api";
-import { FaDeleteLeft } from "react-icons/fa6";
 import Film from "../../components/film/film";
 
 const MesaVoir = () => {
-  const { logout, isLoggedIn, checkAuthStatus, user } = useContext(AuthContext);
+  const { checkAuthStatus } = useContext(AuthContext);
   useEffect(() => {
     checkAuthStatus();
   }, []);
@@ -19,8 +18,6 @@ const MesaVoir = () => {
         const { data, status } = await axios.get(URL.GET_VUES);
         if (status === 200) {
           setDejaVue(data);
-        } else {
-          console.log("error");
         }
       } catch (error) {
         console.log(error);
@@ -51,8 +48,6 @@ const MesaVoir = () => {
   };
   return (
     <div className="px-20 py-2">
-      {/* header */}
-
       <main>
         <h2 className="text-3xl font-bold border-b-2 border-red inline-block">
           Mes films déjà vues

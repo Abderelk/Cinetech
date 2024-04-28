@@ -17,24 +17,24 @@ const Film = ({
   isLoggedIn,
 }) => {
   return (
-    <div className="bg-gray rounded-md  hover:scale-104" key={oneFilm._id}>
+    <div className="rounded-md  hover:scale-104" key={oneFilm._id}>
       {isLoggedIn && handleAddVues && (
         <div className="flex justify-end space-x-4">
           <button
             onClick={(event) => handleAddFavoris(event, oneFilm._id)}
-            className="text-2xl hover:bg-black hover:bg-opacity-50 hover:rounded-md p-2"
+            className="text-2xl hover:bg-gray hover:bg-opacity-50 hover:rounded-md p-2"
           >
             <FaRegStar />
           </button>
           <button
             onClick={(event) => handleAddVues(event, oneFilm._id)}
-            className="text-2xl hover:bg-black hover:bg-opacity-50 hover:rounded-md p-2"
+            className="text-2xl hover:bg-gray hover:bg-opacity-50 hover:rounded-md p-2"
           >
             <FaRegEye />
           </button>
           <button
             onClick={(event) => handleAddAVoir(event, oneFilm._id)}
-            className="text-2xl hover:bg-black hover:bg-opacity-50 hover:rounded-md p-2"
+            className="text-2xl hover:bg-gray hover:bg-opacity-50 hover:rounded-md p-2"
           >
             <FaHourglassStart />
           </button>
@@ -50,14 +50,22 @@ const Film = ({
           </button>
         </div>
       )}
-      <img
-        onClick={() => handleToggleSynopsis(oneFilm._id)}
-        src={`https://image.tmdb.org/t/p/w500/${oneFilm.posterUrl}`}
-        alt={oneFilm.title}
-        className=" object-cover mx-auto cursor-pointer"
-      ></img>
+      {oneFilm.posterUrl != null ? (
+        <img
+          onClick={() => handleToggleSynopsis(oneFilm._id)}
+          src={`https://image.tmdb.org/t/p/w500/${oneFilm.posterUrl}`}
+          alt={oneFilm.title}
+          className="object-cover mx-auto cursor-pointer"
+        />
+      ) : (
+        <img
+          onClick={() => handleToggleSynopsis(oneFilm._id)}
+          src="src/assets/posterFilm.webp"
+          alt={oneFilm.title}
+          className="object-cover mx-auto cursor-pointer"
+        />
+      )}
       <h2 className="text-xl">{oneFilm.title}</h2>
-
       {selectedFilm === oneFilm._id && (
         <>
           <p>{oneFilm.synopsis}</p>

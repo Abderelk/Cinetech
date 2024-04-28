@@ -4,7 +4,6 @@ import App from "./App.jsx";
 import "./index.css";
 import { BrowserRouter } from "react-router-dom";
 // redux
-import { Provider } from "react-redux";
 import { AuthProvider } from "../context/AuthContext.jsx";
 import { UserProvider } from "../context/UserContext.jsx";
 import { FilmProvider } from "../context/FilmContext.jsx";

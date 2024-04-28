@@ -4,13 +4,17 @@ import { URL } from "../constant/api";
 axios.defaults.withCredentials = true;
 
 export const FilmContext = createContext();
-// provider pour les films
+
 export const FilmProvider = ({ children }) => {
   const [films, setFilms] = useState([]);
   const [filmsCount, setFilmsCount] = useState(0);
   const [filmsSelected, setFilmsSelected] = useState([]);
 
-  // fonctions pour récupérer les films
+  /**
+   * Fonction pour chercher les films
+   * @param {*} param0  : objet contenant le numéro de la page
+   * @returns : on stocke les films dans notre constante films ou on affiche un message d'erreur
+   */
   const fetchFilms = async ({ page }) => {
     try {
       const { data, status } = await axios.get(URL.FILM_GET, {
@@ -19,15 +23,16 @@ export const FilmProvider = ({ children }) => {
       if (status === 200) {
         return setFilms(data);
       }
-
       console.log("error while fetching films", data, status);
     } catch (error) {
       console.log(error);
-      console.log("error while fetching data");
     }
   };
-
-  // fonctions pour rechercher un film par therme
+  /**
+   * Fonction pour chercher les films par term
+   * @param {*} term : le terme de recherche
+   * @returns : on stocke les films dans notre constante filmsSelected ou on affiche un message d'erreur
+   */
   const searchFilmByTerm = async (term) => {
     try {
       console.log(term);
@@ -43,8 +48,8 @@ export const FilmProvider = ({ children }) => {
       console.log("error while fetching data");
     }
   };
+  //  fonction pour compter le nombre de films, nécessaire pour la pagination
 
-  // comptes des films
   useEffect(() => {
     const countFilms = async () => {
       try {
@@ -68,6 +73,7 @@ export const FilmProvider = ({ children }) => {
         fetchFilms,
         films,
         filmsSelected,
+        setFilmsSelected,
         searchFilmByTerm,
         filmsCount,
       }}
