@@ -17,10 +17,6 @@ const userSchema = mongoose.Schema({
     type: String,
     required: true,
   },
-  city: {
-    type: String,
-    required: true,
-  },
   favoris: {
     type: Array,
     required: false,

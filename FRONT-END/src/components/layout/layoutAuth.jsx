@@ -1,12 +1,12 @@
 import React from "react";
-import Header from "../header/header";
+import HeaderAuth from "../header/headerAuth";
 import Footer from "../footer/footer";
 import { Outlet } from "react-router-dom";
 
-const Layout = () => {
+const LayoutAuth = () => {
   return (
     <>
-      <Header />
+      <HeaderAuth />
       <section>
         <Outlet />
       </section>
@@ -14,4 +14,4 @@ const Layout = () => {
     </>
   );
 };
-export default Layout;
+export default LayoutAuth;

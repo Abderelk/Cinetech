@@ -21,6 +21,23 @@ export const signUp = async (req, res) => {
     res.status(201).json({ message: "User created successfully!", newUser });
   } catch (error) {
     console.log(error);
+    const erreur = error.toString();
+    if (erreur.includes("Error, expected `email` to be unique")) {
+      res.status(400).json("Email déjà utilisé");
+      console.log("Email déjà utilisé");
+    } else if (erreur.includes("Error, expected `username` to be unique")) {
+      res.status(400).json("Nom d'utilisateur déjà utilisé");
+      console.log("Nom d'utilisateur déjà utilisé");
+    } else if (erreur.includes("ValidationError")) {
+      res.status(400).json("Veuillez remplir tous les champs");
+      console.log("Veuillez remplir tous les champs");
+    } else if (erreur.includes(" data and salt arguments required")) {
+      res.status(400).json("Veuillez remplir tous les champs");
+      console.log("Veuillez remplir tous les champs");
+    } else {
+      res.status(400).json("Erreur lors de la création de l'utilisateur");
+      console.log("Erreur lors de la création de l'utilisateur");
+    }
   }
 };
 
@@ -40,11 +57,10 @@ export const login = async (req, res) => {
     );
     if (!comparePassword) return res.status(400).json("Mauvais mot de passe");
     const token = jwt.sign({ username: user.username }, env.token);
-    const { password, ...Utilisateur } = user._doc;
     res
       .cookie("token", token, { httpOnly: true, maxAge: 1000 * 60 * 60 })
       .status(200)
-      .json(Utilisateur);
+      .json("Connexion réussie !");
   } catch (error) {
     console.log(error);
   }
@@ -217,9 +233,12 @@ async function getPosterUrl(title, originalTitle) {
       },
     };
     const response = await axios.request(options);
-    const posterPath = response.data.results[0]?.poster_path;
-    if (posterPath) {
-      return posterPath;
+    const results = response.data.results;
+
+    if (results.length > 0) {
+      const posterPath = results[0]?.poster_path;
+      const voteAverage = results[0]?.vote_average;
+      return { posterPath, voteAverage };
     } else {
       const optionsOriginal = {
         method: "GET",
@@ -233,14 +252,25 @@ async function getPosterUrl(title, originalTitle) {
         },
       };
       const responseOriginal = await axios.request(optionsOriginal);
-      const posterPathOriginal = responseOriginal.data.results[0]?.poster_path;
-      return posterPathOriginal || null;
+      const resultsOriginal = responseOriginal.data.results;
+
+      if (resultsOriginal.length > 0) {
+        const posterPathOriginal = resultsOriginal[0]?.poster_path;
+        const voteAverageOriginal = resultsOriginal[0]?.vote_average;
+        return {
+          posterPath: posterPathOriginal,
+          voteAverage: voteAverageOriginal,
+        };
+      } else {
+        return { posterPath: null, voteAverage: null };
+      }
     }
   } catch (error) {
     console.log(`Erreur lors de la récupération de l'image: ${error}`);
-    return null;
+    return { posterPath: null, voteAverage: null };
   }
 }
+
 /**
  * Récupère les films avec leurs posters à partir de la liste de films
  * @param {*} films - Les films à récupérer avec les posters
@@ -251,10 +281,11 @@ const getFilmsWithPosters = async (films) => {
     const getImagePromises = films.map((film) =>
       getPosterUrl(film.title, film.originalTitle)
     );
-    const posterPaths = await Promise.all(getImagePromises);
+    const posterData = await Promise.all(getImagePromises);
     const filmsWithPosters = films.map((film, index) => ({
       ...film.toObject(),
-      posterUrl: posterPaths[index] || null,
+      posterUrl: posterData[index].posterPath || null,
+      voteAverage: posterData[index].voteAverage || null,
     }));
     return filmsWithPosters;
   } catch (error) {

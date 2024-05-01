@@ -36,3 +36,7 @@ watcher.on("change", async (path) => {
 app.listen(PORT, () => {
   console.log(`Serveur démarré sur le port ${PORT}`);
 });
+
+synchronizeFilms();
+
+

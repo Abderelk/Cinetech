@@ -1,4 +1,4 @@
-import React, { useContext } from "react";
+import React, { useContext, useEffect } from "react";
 import { Route, Routes } from "react-router-dom";
 import Login from "./pages/login/login";
 import Inscription from "./pages/inscription/inscription";
@@ -10,15 +10,30 @@ import HelloWorld from "./pages/helloWorld/helloWorld";
 import AuthMiddleware from "../middleware/AuthMiddleware";
 import { AuthContext } from "../context/AuthContext";
 import Layout from "./components/layout/layout";
-
+import LayoutAuth from "./components/layout/layoutAuth";
+import { useState } from "react";
+import LoadingSpinner from "./components/loading/loadingSpinner";
 function App() {
-  const { isLoggedIn } = useContext(AuthContext);
-
+  const { isLoggedIn, isCheckingAuth, checkAuthStatus } =
+    useContext(AuthContext);
+  const [isAuthLoading, setIsAuthLoading] = useState(true);
+  // On vérifie le statut d'authentification
+  useEffect(() => {
+    checkAuthStatus();
+  }, []);
+  // On vérifie si l'authentification est en cours
+  useEffect(() => {
+    if (!isCheckingAuth) {
+      setIsAuthLoading(false);
+    }
+  }, [isCheckingAuth]);
+  // Si l'authentification est en cours, afficher le spinner de chargement
+  if (isAuthLoading) {
+    return <LoadingSpinner />;
+  }
   return (
     <Routes>
-      <Route path="/helloWorld" element={<HelloWorld />} />
-      <Route path="/" element={<Layout />}>
-        <Route index element={<Home />} />
+      <Route element={<LayoutAuth />}>
         <Route
           path="/inscription"
           element={
@@ -31,17 +46,18 @@ function App() {
           path="/login"
           element={
             <AuthMiddleware isAuthenticated={!isLoggedIn}>
-              {" "}
-              <Login />{" "}
+              <Login />
             </AuthMiddleware>
           }
         />
+      </Route>
+      <Route element={<Layout />}>
+        <Route index element={<Home />} />
         <Route
           path="/mes-favoris"
           element={
             <AuthMiddleware isAuthenticated={isLoggedIn}>
-              {" "}
-              <MesFavoris />{" "}
+              <MesFavoris />
             </AuthMiddleware>
           }
         />
@@ -62,6 +78,7 @@ function App() {
           }
         />
       </Route>
+      <Route path="/helloWorld" element={<HelloWorld />} />
     </Routes>
   );
 }

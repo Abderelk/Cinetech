@@ -7,9 +7,10 @@ axios.defaults.withCredentials = true;
 export const AuthContext = createContext();
 
 export const AuthProvider = ({ children }) => {
-  const [isLoggedIn, setIsLoggedIn] = useState(true);
+  const [isLoggedIn, setIsLoggedIn] = useState(null);
   const navigate = useNavigate();
   const [user, setUser] = useState("");
+  const [isCheckingAuth, setIsCheckingAuth] = useState(true);
 
   /**
    * Fonction pour s'inscrire
@@ -20,13 +21,12 @@ export const AuthProvider = ({ children }) => {
     try {
       const { data, status } = await axios.post(URL.USER_SIGNUP, newUser);
       if (status === 201) {
-        console.log("inscription réussie", data);
         navigate("/login");
-      } else {
-        console.log("erreur lors de l'inscription");
+        console.log(data.message);
+        return data.message;
       }
     } catch (error) {
-      console.log("erreur lors de l'inscription", error);
+      return error.response.data;
     }
   };
 
@@ -39,14 +39,12 @@ export const AuthProvider = ({ children }) => {
     try {
       const { data, status } = await axios.post(URL.USER_LOGIN, userData);
       if (status === 200) {
-        console.log("Connexion réussie", data);
-        navigate("/");
+        // navigate("/");
         checkAuthStatus();
-      } else {
-        console.log("Erreur lors de la connexion");
       }
+      return data;
     } catch (error) {
-      console.log("Erreur lors de la connexion ", error);
+      return error.response.data;
     }
   };
 
@@ -59,11 +57,13 @@ export const AuthProvider = ({ children }) => {
       const response = await axios.get(URL.USER_CHECK_AUTH);
       setIsLoggedIn(response.data.isLoggedIn);
       setUser(response.data.username);
+      setIsCheckingAuth(false);
     } catch (error) {
       console.error(
         "Erreur lors de la vérification du statut d'authentification",
         error
       );
+      setIsCheckingAuth(false);
     }
   };
 
@@ -75,7 +75,6 @@ export const AuthProvider = ({ children }) => {
     try {
       const { data, status } = await axios.get(URL.USER_LOGOUT);
       if (status === 200) {
-        console.log("Déconnexion réussie", data);
         checkAuthStatus();
       } else {
         console.log("Erreur lors de la déconnexion");
@@ -84,10 +83,17 @@ export const AuthProvider = ({ children }) => {
       console.log("Erreur lors de la déconnexion", error);
     }
   };
-
   return (
     <AuthContext.Provider
-      value={{ login, logout, isLoggedIn, checkAuthStatus, signIn, user }}
+      value={{
+        login,
+        logout,
+        isLoggedIn,
+        checkAuthStatus,
+        signIn,
+        user,
+        isCheckingAuth,
+      }}
     >
       {children}
     </AuthContext.Provider>

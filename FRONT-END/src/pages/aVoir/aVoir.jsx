@@ -1,16 +1,11 @@
-import React, { useState } from "react";
-import { AuthContext } from "../../../context/AuthContext";
-import { useEffect, useContext } from "react";
+import React, { useState, useEffect } from "react";
 import axios from "axios";
 import { URL } from "../../../constant/api";
 import Film from "../../components/film/film";
 
 const MesaVoir = () => {
-  const { checkAuthStatus } = useContext(AuthContext);
-  useEffect(() => {
-    checkAuthStatus();
-  }, []);
   const [aVoir, setAVoir] = useState([]);
+
   useEffect(() => {
     const fetchaVoir = async () => {
       try {
@@ -49,16 +44,20 @@ const MesaVoir = () => {
   };
 
   return (
-    <div className="px-20 py-2">
+    <div className="px-14 py-2">
       <main>
-        <h2 className="text-3xl font-bold border-b-2 border-red inline-block">
+        <h2 className="text-3xl font-bold border-b-2 border-red inline-block my-5">
           Mes films à voir
         </h2>
         {aVoir.length > 0 ? (
-          <div className="grid grid-cols-5 gap-4">
+          <div className="flex flex-wrap justify-center">
             {aVoir.map((oneFilm) => (
               <div
-                className="bg-gray rounded-md p-5 m-3 hover:scale-105"
+                className={
+                  selectedFilm == oneFilm._id
+                    ? "bg-gray bg-opacity-5 rounded-md p-5 m-3 w-full"
+                    : "bg-gray bg-opacity-5 rounded-md p-5 m-3 hover:scale-105"
+                }
                 key={oneFilm._id}
               >
                 <Film

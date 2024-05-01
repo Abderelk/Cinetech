@@ -21,7 +21,7 @@ const Header = () => {
   return (
     <header className="flex justify-between oneFilms-center mb-10 px-20 py-5">
       <div className="flex items-center">
-        <h1 className="text-red px-3  text-2xl">Cineteck</h1>
+        <h1 className="text-red px-3  text-3xl">Cineteck</h1>
 
         {isLoggedIn && (
           <nav>
@@ -71,7 +71,7 @@ const Header = () => {
         {isHomePage && (
           <form onSubmit={handleSubmit} className="flex oneFilms-center mr-2">
             <input
-              type="text"
+              type="search"
               onChange={(event) => setTerm(event.target.value)}
               placeholder="Rechercher un film..."
               className="rounded-l-md pl-3 py-2 focus:outline-none bg-black border border-r-0 border-white"
@@ -99,11 +99,11 @@ const Header = () => {
 
         {!isLoggedIn ? (
           <button className="bg-red rounded-md px-3 py-2 text-white">
-            <Link to="/login">se connecter</Link>
+            <Link to="/login">Se connecter</Link>
           </button>
         ) : (
           <button
-            className="bg-red rounded-md px-3 py-2 text-white"
+            className="bg-red  rounded-md px-3 py-2 text-white"
             onClick={logout}
           >
             Se déconnecter

@@ -3,6 +3,13 @@ import Film from "../models/film.js";
 import axios from "axios";
 import { env } from "../config/index.js";
 
+const normalizeExcelData = (data) => {
+  if (data === "" || typeof data === "undefined" || data === null) {
+    return "";
+  }
+  return `${data}`?.replace(/<[^>]+>/g, "")?.trim();
+};
+
 /**
  * Transforme les données du fichier excel en un tableau de films
  * @returns {Array<Object>} Un tableau d'objets représentant les films avex leurs attributs
@@ -14,17 +21,34 @@ const transformExcelData = () => {
   const sheetName = workbook.SheetNames[0];
   const filmsData = xlsx.utils.sheet_to_json(workbook.Sheets[sheetName]);
 
-  return filmsData.map((film) => ({
-    _id: film["Id"],
-    title: film["Titre"] || "",
-    originalTitle: film["Titre original"] || "",
-    director: film["Réalisateurs"] || "",
-    year: film["Année de production"],
-    nationality: film["Nationalité"] || "",
-    duration: film["Durée"] || "",
-    genre: film["Genre"] || "",
-    synopsis: film["Synopsis"] || "",
-  }));
+  // Utilisation d'une carte pour stocker les films uniques
+  const filmsMap = new Map();
+
+  // Nettoyage des caractères spéciaux et fusion des réalisateurs pour les doublons de films
+  filmsData.forEach((film) => {
+    const key = film.Titre;
+    const cleanFilm = {
+      _id: film["Id"],
+      title: normalizeExcelData(film["Titre"]),
+      originalTitle: normalizeExcelData(film["Titre original"]),
+      director: normalizeExcelData(film["Réalisateurs"]),
+      year: film["Année de production"],
+      nationality: normalizeExcelData(film["Nationalité"]),
+      duration: normalizeExcelData(film["Durée"]),
+      genre: normalizeExcelData(film["Genre"]),
+      synopsis: normalizeExcelData(film["Synopsis"]),
+    };
+    if (!filmsMap.has(key)) {
+      filmsMap.set(key, cleanFilm);
+    } else {
+      // Si le film existe déjà, fusionner les réalisateurs
+      const existingFilm = filmsMap.get(key);
+      existingFilm.director += `, ${cleanFilm.director}`;
+    }
+  });
+
+  // Retourner les films uniques
+  return [...filmsMap.values()];
 };
 
 /**
@@ -119,9 +143,12 @@ async function getPosterUrl(title, originalTitle) {
       },
     };
     const response = await axios.request(options);
-    const posterPath = response.data.results[0]?.poster_path;
-    if (posterPath) {
-      return posterPath;
+    const results = response.data.results;
+
+    if (results.length > 0) {
+      const posterPath = results[0]?.poster_path;
+      const voteAverage = results[0]?.vote_average;
+      return { posterPath, voteAverage };
     } else {
       const optionsOriginal = {
         method: "GET",
@@ -135,22 +162,26 @@ async function getPosterUrl(title, originalTitle) {
         },
       };
       const responseOriginal = await axios.request(optionsOriginal);
-      const posterPathOriginal = responseOriginal.data.results[0]?.poster_path;
-      return posterPathOriginal || null;
+      const resultsOriginal = responseOriginal.data.results;
+
+      if (resultsOriginal.length > 0) {
+        const posterPathOriginal = resultsOriginal[0]?.poster_path;
+        const voteAverageOriginal = resultsOriginal[0]?.vote_average;
+        return {
+          posterPath: posterPathOriginal,
+          voteAverage: voteAverageOriginal,
+        };
+      } else {
+        return { posterPath: null, voteAverage: null };
+      }
     }
   } catch (error) {
     console.log(`Erreur lors de la récupération de l'image: ${error}`);
-    return null;
+    return { posterPath: null, voteAverage: null };
   }
 }
-/**
- * Récupère la liste des films en fonction de la page demandée
- * @param {*} req - La requête HTTP contenant le numéro de la page demandée (query)
- * @param {*} res - La réponse contenant la liste des films ou un message d'erreur avec un code 500 en cas d'erreur
- */
 
 export const getFilms = async (req, res) => {
-  console.log(req.query.page);
   try {
     const page = req.query.page || 1;
     const filmsPerPage = 20;
@@ -164,10 +195,12 @@ export const getFilms = async (req, res) => {
     const getImagePromises = films.map((film) =>
       getPosterUrl(film.title, film.originalTitle)
     );
-    const posterPaths = await Promise.all(getImagePromises);
+
+    const posterData = await Promise.all(getImagePromises);
     const filmsWithPosters = films.map((film, index) => ({
       ...film.toObject(),
-      posterUrl: posterPaths[index] || null,
+      posterUrl: posterData[index].posterPath || null,
+      voteAverage: posterData[index].voteAverage || null,
     }));
 
     res.json(filmsWithPosters);
@@ -217,12 +250,14 @@ export const searchFilmByTerm = async (req, res) => {
     const getImagePromises = filmsFiletered.map((film) =>
       getPosterUrl(film.title, film.originalTitle)
     );
-    const posterPaths = await Promise.all(getImagePromises);
+    const posterData = await Promise.all(getImagePromises);
+    console.log(posterData);
     const filmsWithPosters = filmsFiletered.map((film, index) => ({
       ...film.toObject(),
-      posterUrl: posterPaths[index] || null,
+      posterUrl: posterData[index].posterPath || null,
+      voteAverage: posterData.voteAverage || null,
     }));
-    res.json(filmsWithPosters.slice(0, 5));
+    res.json(filmsWithPosters.slice(0, 4));
   } catch (error) {
     console.log(`Erreur lors de la recherche des films: ${error}`);
     res.status(500).json({ message: "Erreur lors de la recherche des films" });
