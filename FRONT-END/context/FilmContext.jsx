@@ -10,45 +10,7 @@ export const FilmProvider = ({ children }) => {
   const [filmsCount, setFilmsCount] = useState(0);
   const [filmsSelected, setFilmsSelected] = useState([]);
 
-  /**
-   * Fonction pour chercher les films
-   * @param {*} param0  : objet contenant le numéro de la page
-   * @returns : on stocke les films dans notre constante films ou on affiche un message d'erreur
-   */
-  const fetchFilms = async ({ page }) => {
-    try {
-      const { data, status } = await axios.get(URL.FILM_GET, {
-        params: { page: page },
-      });
-      if (status === 200) {
-        return setFilms(data);
-      }
-      console.log("error while fetching films", data, status);
-    } catch (error) {
-      console.log(error);
-    }
-  };
-  /**
-   * Fonction pour chercher les films par term
-   * @param {*} term : le terme de recherche
-   * @returns : on stocke les films dans notre constante filmsSelected ou on affiche un message d'erreur
-   */
-  const searchFilmByTerm = async (term) => {
-    try {
-      console.log(term);
-      const { data, status } = await axios.get(URL.FILM_SEARCH, {
-        params: { term },
-      });
-      if (status === 200) {
-        return setFilmsSelected(data);
-      }
-      console.log("error while fetching films", data, status);
-    } catch (error) {
-      console.log(error);
-      console.log("error while fetching data");
-    }
-  };
-  //  fonction pour compter le nombre de films, nécessaire pour la pagination
+  // Fonction pour compter les films
 
   useEffect(() => {
     const countFilms = async () => {
@@ -66,6 +28,49 @@ export const FilmProvider = ({ children }) => {
     };
     countFilms();
   }, []);
+
+  /**
+   * Fonction pour chercher les films
+   * @param {*} param0  : objet contenant le numéro de la page
+   * @returns : on stocke les films dans notre constante films ou on affiche un message d'erreur
+   */
+
+  const fetchFilms = async ({ page }) => {
+    try {
+      const { data, status } = await axios.get(URL.FILM_GET, {
+        params: { page: page },
+      });
+      if (status === 200) {
+        return setFilms(data);
+      }
+      console.log("error while fetching films", data, status);
+    } catch (error) {
+      console.log(error);
+    }
+  };
+  
+  /**
+   * Fonction pour chercher les films par term
+   * @param {*} term : le terme de recherche
+   * @returns : on stocke les films dans notre constante filmsSelected ou on affiche un message d'erreur
+   */
+
+  const searchFilmByTerm = async (term) => {
+    try {
+      console.log(term);
+      const { data, status } = await axios.get(URL.FILM_SEARCH, {
+        params: { term },
+      });
+      if (status === 200) {
+        return setFilmsSelected(data);
+      }
+      console.log("error while fetching films", data, status);
+    } catch (error) {
+      console.log(error);
+      console.log("error while fetching data");
+    }
+  };
+  //  fonction pour compter le nombre de films, nécessaire pour la pagination
 
   return (
     <FilmContext.Provider

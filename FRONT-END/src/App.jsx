@@ -7,29 +7,42 @@ import MesFavoris from "./pages/favoris/mesFavoris";
 import AVoir from "./pages/aVoir/aVoir";
 import DejaVues from "./pages/vue/dejaVue";
 import HelloWorld from "./pages/helloWorld/helloWorld";
+import Loading from "./pages/loading/loading";
 import AuthMiddleware from "../middleware/AuthMiddleware";
 import { AuthContext } from "../context/AuthContext";
 import Layout from "./components/layout/layout";
 import LayoutAuth from "./components/layout/layoutAuth";
 import { useState } from "react";
-import LoadingSpinner from "./components/loading/loadingSpinner";
 function App() {
-  const { isLoggedIn, isCheckingAuth, checkAuthStatus } =
-    useContext(AuthContext);
-  const [isAuthLoading, setIsAuthLoading] = useState(true);
+  const { isLoggedIn, isLoading, checkAuthStatus } = useContext(AuthContext);
+  const [chargement, setChargement] = useState(true);
   // On vérifie le statut d'authentification
   useEffect(() => {
-    checkAuthStatus();
+    const timer = setTimeout(() => {
+      checkAuthStatus();
+    }, 700);
+
+    return () => clearTimeout(timer);
   }, []);
+
   // On vérifie si l'authentification est en cours
   useEffect(() => {
-    if (!isCheckingAuth) {
-      setIsAuthLoading(false);
+    if (!isLoading) {
+      setChargement(false);
     }
-  }, [isCheckingAuth]);
+  }, [isLoading]);
   // Si l'authentification est en cours, afficher le spinner de chargement
-  if (isAuthLoading) {
-    return <LoadingSpinner />;
+  if (chargement) {
+    return (
+      <Routes>
+        <Route path="/" element={<Loading />} />
+        <Route path="/login" element={<Loading />} />
+        <Route path="/inscription" element={<Loading />} />
+        <Route path="/mes-favoris" element={<Loading />} />
+        <Route path="/a-voir" element={<Loading />} />
+        <Route path="/deja-vues" element={<Loading />} />
+      </Routes>
+    );
   }
   return (
     <Routes>

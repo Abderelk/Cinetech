@@ -59,7 +59,7 @@ const Film = ({
         <div className="flex justify-end space-x-4">
           <button
             onClick={(event) => handleRemoveFilm(event, oneFilm._id)}
-            className="text-2xl hover:bg-black hover:bg-opacity-50 hover:rounded-md p-2"
+            className="text-xl hover:bg-red hover:bg-opacity-50 hover:rounded-md p-2"
           >
             <FaDeleteLeft />
           </button>

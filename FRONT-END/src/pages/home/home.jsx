@@ -2,7 +2,6 @@ import React, { useState, useEffect, useContext } from "react";
 import { AuthContext } from "../../../context/AuthContext.jsx";
 import { FilmContext } from "../../../context/FilmContext.jsx";
 import { UserContext } from "../../../context/UserContext.jsx";
-import LoadingSpinner from "../../components/loading/loadingSpinner.jsx";
 import Film from "../../components/film/film.jsx";
 import { FaCircleXmark } from "react-icons/fa6";
 import Pagination from "../../components/pagination/pagination.jsx";
@@ -13,7 +12,7 @@ const Home = () => {
   const { filmsSelected, setFilmsSelected, films, fetchFilms, filmsCount } =
     useContext(FilmContext);
   const [selectedFilm, setSelectedFilm] = useState(null);
-  const { addFavoris, addAVoir, addVues } = useContext(UserContext);
+  const { addToRubriques } = useContext(UserContext);
 
   useEffect(() => {
     fetchFilms({ page });
@@ -22,7 +21,7 @@ const Home = () => {
   const handleAddFavoris = async (event, oneFilm) => {
     event.preventDefault();
     try {
-      addFavoris(oneFilm);
+      addToRubriques(oneFilm, "favoris");
     } catch (error) {
       console.log(error);
     }
@@ -31,16 +30,16 @@ const Home = () => {
   const handleAddAVoir = async (event, oneFilm) => {
     event.preventDefault();
     try {
-      addAVoir(oneFilm);
+      addToRubriques(oneFilm, "aVoir");
     } catch (error) {
       console.log(error);
     }
   };
 
-  const handleAddVues = async (event, oneFilm) => {
+  const handleAddVues = async (event, filmId) => {
     event.preventDefault();
     try {
-      addVues(oneFilm);
+      addToRubriques(filmId, "dejaVu");
     } catch (error) {
       console.log(error);
     }
@@ -50,14 +49,15 @@ const Home = () => {
     setSelectedFilm(selectedFilm === filmId ? null : filmId);
   };
 
-  const filmsPerPage = filmsCount;
-  const numberOfPages = Math.ceil(filmsPerPage / 16);
-
   const handleCloseSearch = () => {
     setFilmsSelected([]);
   };
+
+  const numberOfFilms = filmsCount;
+  const numberOfPages = Math.ceil(numberOfFilms / 20);
+
   return (
-    <div className="px-14 py-2">
+    <div className="px-14 py-2 min-h-screen">
       <main>
         {/* Affichage du film recherché */}
         {filmsSelected.length > 0 && (
@@ -100,7 +100,6 @@ const Home = () => {
         </h2>
         {
           <div className="flex flex-wrap justify-center">
-            {films.length === 0 && <LoadingSpinner />}
             {films.map((oneFilm) => (
               <div
                 className={

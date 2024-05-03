@@ -1,8 +1,16 @@
 import xlsx from "xlsx";
 import Film from "../models/film.js";
+import userModel from "../models/user.js";
+import filmModel from "../models/film.js";
 import axios from "axios";
 import { env } from "../config/index.js";
+import jwt from "jsonwebtoken";
 
+/**
+ * Normalise les données du fichier Excel
+ * @param {*} data - Les données à normaliser
+ * @returns Les données normalisées
+ */
 const normalizeExcelData = (data) => {
   if (data === "" || typeof data === "undefined" || data === null) {
     return "";
@@ -14,17 +22,14 @@ const normalizeExcelData = (data) => {
  * Transforme les données du fichier excel en un tableau de films
  * @returns {Array<Object>} Un tableau d'objets représentant les films avex leurs attributs
  */
-
 const transformExcelData = () => {
   const filePath = "film.xlsx";
   const workbook = xlsx.readFile(filePath);
   const sheetName = workbook.SheetNames[0];
   const filmsData = xlsx.utils.sheet_to_json(workbook.Sheets[sheetName]);
 
-  // Utilisation d'une carte pour stocker les films uniques
   const filmsMap = new Map();
 
-  // Nettoyage des caractères spéciaux et fusion des réalisateurs pour les doublons de films
   filmsData.forEach((film) => {
     const key = film.Titre;
     const cleanFilm = {
@@ -38,16 +43,15 @@ const transformExcelData = () => {
       genre: normalizeExcelData(film["Genre"]),
       synopsis: normalizeExcelData(film["Synopsis"]),
     };
+
     if (!filmsMap.has(key)) {
       filmsMap.set(key, cleanFilm);
     } else {
-      // Si le film existe déjà, fusionner les réalisateurs
       const existingFilm = filmsMap.get(key);
       existingFilm.director += `, ${cleanFilm.director}`;
     }
   });
 
-  // Retourner les films uniques
   return [...filmsMap.values()];
 };
 
@@ -55,7 +59,6 @@ const transformExcelData = () => {
  * Importe les films du fichier Excel dans la base de données
  * @param {*} res - La réponse HTTP
  */
-
 export const importFilms = async (_, res) => {
   try {
     const transformedData = transformExcelData();
@@ -73,7 +76,6 @@ export const importFilms = async (_, res) => {
 /**
  * Synchronise les films du fichier Excel avec ceux de la base de données en effectuant deux boucles, une pour ajouter les films manquant et mettre à jour les films existants, et une autre pour supprimer les films qui ne sont plus dans le fichier Excel
  */
-
 export const synchronizeFilms = async () => {
   try {
     const transformedData = transformExcelData();
@@ -123,12 +125,25 @@ export const synchronizeFilms = async () => {
 };
 
 /**
+ * Comptes le nombre de films dans la base de données, nécessaire pour la pagination
+ * @param {*} res - La réponse HTTP contenant le nombre de films ou un message d'erreur avec un code 500 en cas d'erreur
+ */
+export const countFilms = async (_, res) => {
+  try {
+    const count = await Film.countDocuments();
+    res.json({ count });
+  } catch (error) {
+    console.log(`Erreur lors du comptage des films: ${error}`);
+    res.status(500).json({ message: "Erreur lors du comptage des films" });
+  }
+};
+
+/**
  * Récupère l'URL du poster d'un film à partir de l'API The Movie Database
  * @param {*} title
  * @param {*} originalTitle
  * @returns {String} Le lien du poster du film (URL) ou null si le poster n'est pas trouvé
  */
-
 async function getPosterUrl(title, originalTitle) {
   try {
     const options = {
@@ -181,6 +196,35 @@ async function getPosterUrl(title, originalTitle) {
   }
 }
 
+/**
+ * Récupère les films avec leurs posters à partir de la liste de films
+ * @param {*} films - Les films à récupérer avec les posters
+ * @returns {Array} Les films avec les posters
+ */
+const getFilmsWithPosters = async (films) => {
+  try {
+    const getImagePromises = films.map((film) =>
+      getPosterUrl(film.title, film.originalTitle)
+    );
+    const posterData = await Promise.all(getImagePromises);
+    const filmsWithPosters = films.map((film, index) => ({
+      ...film.toObject(),
+      posterUrl: posterData[index].posterPath || null,
+      voteAverage: posterData[index].voteAverage || null,
+    }));
+    return filmsWithPosters;
+  } catch (error) {
+    throw new Error(
+      `Erreur lors de la récupération des films avec posters: ${error}`
+    );
+  }
+};
+
+/**
+ * Récupère la liste des films de la base de données
+ * @param {*} req - La requête HTTP contenant le numéro de la page à récupérer
+ * @param {*} res - La réponse contenant la liste des films
+ */
 export const getFilms = async (req, res) => {
   try {
     const page = req.query.page || 1;
@@ -215,11 +259,33 @@ export const getFilms = async (req, res) => {
 };
 
 /**
+ * Récupère la liste des films favoris, vues et à voir de l'utilisateur connecté
+ * @param {*} req - La requête contenant les cookies de l'utilisateur connecté
+ * @param {*} res - La réponse contenant la liste des films favoris de l'utilisateur ou un message d'erreur
+ */
+export const getRubriques = async (req, res) => {
+  try {
+    const rubrique = req.query.rubrique;
+    const token = jwt.verify(req.headers.cookie.split("=")[1], env.token);
+    const username = token.username;
+    const user = await userModel.findOne({ username: username });
+    const filmsFavoris = await filmModel.find({ _id: { $in: user[rubrique] } });
+    console.log(user);
+    const filmsWithPosters = await getFilmsWithPosters(filmsFavoris);
+    res.status(200).json(filmsWithPosters);
+  } catch (error) {
+    console.log(error);
+    res
+      .status(500)
+      .json({ message: "Erreur lors de la récupération des films vus" });
+  }
+};
+
+/**
  * Normalise une chaîne de caractères en la mettant en minuscule et en retirant les accents, utile pour la recherche de films.
  * @param {*} str - La chaîne de caractères à normaliser
  * @returns {String} La chaîne de caractères normalisée
  */
-
 function normalizeString(str) {
   if (str === "" || typeof str === "undefined" || str === null) {
     return "";
@@ -235,7 +301,6 @@ function normalizeString(str) {
  * @param {*} req - La requête HTTP contenant les paramètres de recherche (query)
  * @param {*} res - La réponse contenant les films trouvés ou un message d'erreur avec un code 500 en cas d'erreur
  */
-
 export const searchFilmByTerm = async (req, res) => {
   try {
     const term = req.query.term;
@@ -251,29 +316,14 @@ export const searchFilmByTerm = async (req, res) => {
       getPosterUrl(film.title, film.originalTitle)
     );
     const posterData = await Promise.all(getImagePromises);
-    console.log(posterData);
     const filmsWithPosters = filmsFiletered.map((film, index) => ({
       ...film.toObject(),
       posterUrl: posterData[index].posterPath || null,
-      voteAverage: posterData.voteAverage || null,
+      voteAverage: posterData[index].voteAverage || null,
     }));
     res.json(filmsWithPosters.slice(0, 4));
   } catch (error) {
     console.log(`Erreur lors de la recherche des films: ${error}`);
     res.status(500).json({ message: "Erreur lors de la recherche des films" });
-  }
-};
-
-/**
- * Comptes le nombre de films dans la base de données, nécessaire pour la pagination
- * @param {*} res - La réponse HTTP contenant le nombre de films ou un message d'erreur avec un code 500 en cas d'erreur
- */
-export const countFilms = async (_, res) => {
-  try {
-    const count = await Film.countDocuments();
-    res.json({ count });
-  } catch (error) {
-    console.log(`Erreur lors du comptage des films: ${error}`);
-    res.status(500).json({ message: "Erreur lors du comptage des films" });
   }
 };

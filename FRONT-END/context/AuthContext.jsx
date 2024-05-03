@@ -10,7 +10,7 @@ export const AuthProvider = ({ children }) => {
   const [isLoggedIn, setIsLoggedIn] = useState(null);
   const navigate = useNavigate();
   const [user, setUser] = useState("");
-  const [isCheckingAuth, setIsCheckingAuth] = useState(true);
+  const [isLoading, setIsLoading] = useState(true);
 
   /**
    * Fonction pour s'inscrire
@@ -57,13 +57,13 @@ export const AuthProvider = ({ children }) => {
       const response = await axios.get(URL.USER_CHECK_AUTH);
       setIsLoggedIn(response.data.isLoggedIn);
       setUser(response.data.username);
-      setIsCheckingAuth(false);
+      setIsLoading(false);
     } catch (error) {
       console.error(
         "Erreur lors de la vérification du statut d'authentification",
         error
       );
-      setIsCheckingAuth(false);
+      setIsLoading(false);
     }
   };
 
@@ -92,7 +92,7 @@ export const AuthProvider = ({ children }) => {
         checkAuthStatus,
         signIn,
         user,
-        isCheckingAuth,
+        isLoading,
       }}
     >
       {children}

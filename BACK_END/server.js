@@ -9,6 +9,7 @@ import cookieParser from "cookie-parser";
 // router
 import filmRouter from "./router/film.js";
 import userRouter from "./router/user.js";
+import authRouter from "./router/auth.js";
 // app express
 const app = express();
 // port
@@ -25,6 +26,7 @@ app.use(cors({ origin: PORT, credentials: true }));
 // PREFIX ROUTES
 app.use("/api/film", filmRouter);
 app.use("/api/user", userRouter);
+app.use("/api/auth", authRouter);
 // utilisation de chokidar pour détecter les changements dans le fichier film.xlsx(à chaque nouvel enregistrement dans le fichier film.xlsx qu'il y aie un changement ou non on est informé)
 const watcher = chokidar.watch("film.xlsx", { persistent: true });
 watcher.on("change", async (path) => {
@@ -38,5 +40,3 @@ app.listen(PORT, () => {
 });
 
 synchronizeFilms();
-
-

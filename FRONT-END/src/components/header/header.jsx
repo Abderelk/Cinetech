@@ -1,75 +1,68 @@
-import React from "react";
+import React, { useState, useContext } from "react";
 import { Link } from "react-router-dom";
 import { AuthContext } from "../../../context/AuthContext";
-import { useContext } from "react";
-import { FaHome } from "react-icons/fa";
-import { FaRegStar, FaRegEye, FaHourglassStart } from "react-icons/fa6";
-import { useState } from "react";
 import { FilmContext } from "../../../context/FilmContext";
+import { FaHome, FaRegStar, FaRegEye, FaHourglassStart } from "react-icons/fa";
 
 const Header = () => {
   const { searchFilmByTerm } = useContext(FilmContext);
-
   const { isLoggedIn, logout } = useContext(AuthContext);
-  const isHomePage = location.pathname === "/";
   const [term, setTerm] = useState("");
+  const isHomePage = location.pathname === "/";
 
   const handleSubmit = async (event) => {
     event.preventDefault();
     searchFilmByTerm(term);
   };
+
   return (
-    <header className="flex justify-between oneFilms-center mb-10 px-20 py-5">
-      <div className="flex items-center">
-        <h1 className="text-red px-3  text-3xl">Cineteck</h1>
-
-        {isLoggedIn && (
-          <nav>
-            <ul className="flex flex-row items-center">
-              <li className="px-3 text-sm">
-                <Link
-                  className="flex text-center hover:border-b-2 border-red "
-                  to="/"
-                >
-                  <FaHome className="text-xl mr-2" />
-                  Accueil
-                </Link>
-              </li>
-              <li className=" px-3  text-sm">
-                <Link
-                  className="flex text-center  hover:border-b-2 border-red"
-                  to="/mes-favoris"
-                >
-                  {" "}
-                  <FaRegStar className="text-xl mr-2" />
-                  Mes favoris
-                </Link>
-              </li>
-              <li className="px-3 text-sm">
-                <Link
-                  className=" flex text-center hover:border-b-2 border-red"
-                  to="/deja-vues"
-                >
-                  <FaRegEye className="text-xl mr-2" />
-                  Déjà vues
-                </Link>
-              </li>
-              <li className="px-3 text-sm">
-                <Link
-                  className=" flex text-center hover:border-b-2 border-red "
-                  to="/a-voir"
-                >
-                  <FaHourglassStart className="text-xl mr-2" />À voir
-                </Link>
-              </li>
-            </ul>
-          </nav>
-        )}
-      </div>
-
-      <div className="flex oneFilms-center">
+    <header className="flex flex-col md:flex-row justify-between items-center mb-10 px-5 md:px-20 py-5">
+      <h1 className="text-red text-3xl mb-2 md:mb-0">Cineteck</h1>
+      {isLoggedIn && (
+        <nav className="flex flex-wrap justify-center md:justify-start">
+          <ul className="flex flex-row items-center">
+            <li className="px-3 text-sm">
+              <Link
+                className="flex text-center hover:border-b-2 border-red "
+                to="/"
+              >
+                <FaHome className="text-xl mr-2" />
+                Accueil
+              </Link>
+            </li>
+            <li className=" px-3  text-sm">
+              <Link
+                className="flex text-center  hover:border-b-2 border-red"
+                to="/mes-favoris"
+              >
+                {" "}
+                <FaRegStar className="text-xl mr-2" />
+                Mes favoris
+              </Link>
+            </li>
+            <li className="px-3 text-sm">
+              <Link
+                className=" flex text-center hover:border-b-2 border-red"
+                to="/deja-vues"
+              >
+                <FaRegEye className="text-xl mr-2" />
+                Déjà vues
+              </Link>
+            </li>
+            <li className="px-3 text-sm">
+              <Link
+                className=" flex text-center hover:border-b-2 border-red "
+                to="/a-voir"
+              >
+                <FaHourglassStart className="text-xl mr-2" />À voir
+              </Link>
+            </li>
+          </ul>
+        </nav>
+      )}
+      <div className="flex items-center mt-4 md:mt-0">
         {isHomePage && (
-          <form onSubmit={handleSubmit} className="flex oneFilms-center mr-2">
+          <form onSubmit={handleSubmit} className="flex items-center mr-2">
             <input
               type="search"
               onChange={(event) => setTerm(event.target.value)}
@@ -96,14 +89,13 @@ const Header = () => {
             </button>
           </form>
         )}
-
         {!isLoggedIn ? (
           <button className="bg-red rounded-md px-3 py-2 text-white">
             <Link to="/login">Se connecter</Link>
           </button>
         ) : (
           <button
-            className="bg-red  rounded-md px-3 py-2 text-white"
+            className="bg-red rounded-md px-3 py-2 text-white"
             onClick={logout}
           >
             Se déconnecter
@@ -113,4 +105,15 @@ const Header = () => {
     </header>
   );
 };
+
+const NavLink = ({ to, icon, label }) => (
+  <Link
+    to={to}
+    className="flex text-center hover:border-b-2 border-red px-3 text-sm mb-2 md:mb-0 mr-4"
+  >
+    {icon}
+    {label}
+  </Link>
+);
+
 export default Header;
