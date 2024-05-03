@@ -24,9 +24,7 @@ export const addToRubriques = async (req, res) => {
               { username: username },
               { $pull: { dejaVu: filmId } }
             );
-            res.json(
-              "Film déjà dans les films vus mais supprimés des films à voir"
-            );
+            res.json("Le film a été ajouté à la liste des films vus.");
           } else if (
             !user.dejaVu.includes(filmId) &&
             user.aVoir.includes(filmId)
@@ -36,24 +34,24 @@ export const addToRubriques = async (req, res) => {
               { $push: { dejaVu: filmId }, $pull: { aVoir: filmId } }
             );
             res.json(
-              "Film ajouté à la rubrique des films vues et retiré des films à voir"
+              "Le Film a été ajouté à la liste des films vus et retiré des films à voir"
             );
           } else {
             await userModel.findOneAndUpdate(
               { username: username },
               { $push: { dejaVu: filmId } }
             );
-            res.json("Film ajouté aux films vus");
+            res.json("Le film est déjà dans lest films vus");
           }
         } else {
           if (user[rubrique].includes(filmId)) {
-            res.json("Film déjà dans la rubrique");
+            res.json(`Le film est déjà dans la liste des films ${rubrique}.`);
           } else {
             await userModel.findOneAndUpdate(
               { username: username },
               { $push: { [rubrique]: filmId } }
             );
-            res.json("Film ajouté");
+            res.json(`Le film a été ajouté à la liste des films ${rubrique}.`);
           }
         }
       } else {

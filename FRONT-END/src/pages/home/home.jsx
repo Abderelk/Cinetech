@@ -5,6 +5,7 @@ import { UserContext } from "../../../context/UserContext.jsx";
 import Film from "../../components/film/film.jsx";
 import { FaCircleXmark } from "react-icons/fa6";
 import Pagination from "../../components/pagination/pagination.jsx";
+import Notification from "../../components/notification/notification.jsx";
 
 const Home = () => {
   const [page, setPage] = useState(1);
@@ -13,6 +14,8 @@ const Home = () => {
     useContext(FilmContext);
   const [selectedFilm, setSelectedFilm] = useState(null);
   const { addToRubriques } = useContext(UserContext);
+  const [notificationOpen, setNotificationOpen] = useState(false);
+  const [notificationContent, setNotificationContent] = useState("");
 
   useEffect(() => {
     fetchFilms({ page });
@@ -21,7 +24,12 @@ const Home = () => {
   const handleAddFavoris = async (event, oneFilm) => {
     event.preventDefault();
     try {
-      addToRubriques(oneFilm, "favoris");
+      const data = await addToRubriques(oneFilm, "favoris");
+      setNotificationContent(data);
+      setNotificationOpen(true);
+      setTimeout(() => {
+        setNotificationOpen(false);
+      }, 2000);
     } catch (error) {
       console.log(error);
     }
@@ -30,7 +38,9 @@ const Home = () => {
   const handleAddAVoir = async (event, oneFilm) => {
     event.preventDefault();
     try {
-      addToRubriques(oneFilm, "aVoir");
+      const data = await addToRubriques(oneFilm, "aVoir");
+      setNotificationContent(data);
+      setNotificationOpen(true);
     } catch (error) {
       console.log(error);
     }
@@ -39,7 +49,9 @@ const Home = () => {
   const handleAddVues = async (event, filmId) => {
     event.preventDefault();
     try {
-      addToRubriques(filmId, "dejaVu");
+      const data = await addToRubriques(filmId, "dejaVu");
+      setNotificationContent(data);
+      setNotificationOpen(true);
     } catch (error) {
       console.log(error);
     }
@@ -52,6 +64,9 @@ const Home = () => {
   const handleCloseSearch = () => {
     setFilmsSelected([]);
   };
+  const closeNotification = () => {
+    setNotificationOpen(false);
+  };
 
   const numberOfFilms = filmsCount;
   const numberOfPages = Math.ceil(numberOfFilms / 20);
@@ -59,6 +74,11 @@ const Home = () => {
   return (
     <div className="px-14 py-2 min-h-screen">
       <main>
+        <Notification
+          isOpen={notificationOpen}
+          content={notificationContent}
+          closeNotification={closeNotification}
+        />
         {/* Affichage du film recherché */}
         {filmsSelected.length > 0 && (
           <div className="flex justify-between my-5">

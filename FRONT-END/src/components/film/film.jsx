@@ -71,6 +71,7 @@ const Film = ({
             onClick={() => handleToggleSynopsis(oneFilm._id)}
             src={`https://image.tmdb.org/t/p/w500/${oneFilm.posterUrl}`}
             alt={oneFilm.title}
+            loading="lazy"
             className="object-cover cursor-pointer h-96"
           />
         ) : (
@@ -78,6 +79,7 @@ const Film = ({
             onClick={() => handleToggleSynopsis(oneFilm._id)}
             src="src/assets/posterFilm.webp"
             alt={oneFilm.title}
+            loading="lazy"
             className="object-cover h-96 cursor-pointer"
           />
         )}

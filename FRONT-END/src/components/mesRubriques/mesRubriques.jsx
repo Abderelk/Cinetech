@@ -1,12 +1,13 @@
 import React, { useState, useEffect, useContext } from "react";
 import Film from "../../components/film/film";
 import { UserContext } from "../../../context/UserContext";
-
+import Notification from "../notification/notification";
 const MesRubriques = ({ title, rubrique }) => {
   const [data, setData] = useState([]);
   const [loading, setLoading] = useState(true);
   const { removeFilmFromRubrique, getFilmsRubrique } = useContext(UserContext);
-
+  const [notificationOpen, setNotificationOpen] = useState(false);
+  const [notificationContent, setNotificationContent] = useState("");
   useEffect(() => {
     const getFilm = async () => {
       const data = await getFilmsRubrique(rubrique);
@@ -21,9 +22,17 @@ const MesRubriques = ({ title, rubrique }) => {
     try {
       const updatedData = await removeFilmFromRubrique(oneFilm, rubrique);
       setData(updatedData);
+      setNotificationContent("Film retiré de la rubrique");
+      setNotificationOpen(true);
+      setTimeout(() => {
+        setNotificationOpen(false);
+      }, 2000);
     } catch (error) {
       console.log(error);
     }
+  };
+  const closeNotification = () => {
+    setNotificationOpen(false);
   };
 
   const [selectedFilm, setSelectedFilm] = useState(null);
@@ -33,6 +42,11 @@ const MesRubriques = ({ title, rubrique }) => {
   return (
     <div className="px-14 py-2 min-h-screen">
       <main>
+        <Notification
+          isOpen={notificationOpen}
+          content={notificationContent}
+          closeNotification={closeNotification}
+        />
         <h2 className="text-3xl font-bold border-b-2 border-red inline-block my-5">
           {title}
         </h2>

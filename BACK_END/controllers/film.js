@@ -306,22 +306,22 @@ export const searchFilmByTerm = async (req, res) => {
     const term = req.query.term;
     const termNormalized = normalizeString(term);
     const films = await Film.find({});
-    const filmsFiletered = films.filter(
+    const filmsFiltered = films.filter(
       (film) =>
         normalizeString(film.title).includes(termNormalized) ||
         normalizeString(film.originalTitle).includes(termNormalized) ||
         normalizeString(film.director).includes(termNormalized)
     );
-    const getImagePromises = filmsFiletered.map((film) =>
-      getPosterUrl(film.title, film.originalTitle)
-    );
+    const getImagePromises = filmsFiltered
+      .slice(0, 4)
+      .map((film) => getPosterUrl(film.title, film.originalTitle));
     const posterData = await Promise.all(getImagePromises);
-    const filmsWithPosters = filmsFiletered.map((film, index) => ({
+    const filmsWithPosters = filmsFiltered.slice(0, 4).map((film, index) => ({
       ...film.toObject(),
       posterUrl: posterData[index].posterPath || null,
       voteAverage: posterData[index].voteAverage || null,
     }));
-    res.json(filmsWithPosters.slice(0, 4));
+    res.json(filmsWithPosters);
   } catch (error) {
     console.log(`Erreur lors de la recherche des films: ${error}`);
     res.status(500).json({ message: "Erreur lors de la recherche des films" });
