@@ -78,8 +78,9 @@ export const checkAuth = async (req, res) => {
       const username = decodedToken.username;
       const expDate = new Date(decodedToken.exp * 1000);
       const now = new Date();
+
       if (expDate < now) {
-        return res.json({ isLoggedIn: false });
+        return res.json({ isLoggedIn: false, username: username });
       } else {
         return res.status(200).json({ isLoggedIn: true, username: username });
       }

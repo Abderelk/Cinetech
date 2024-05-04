@@ -270,7 +270,6 @@ export const getRubriques = async (req, res) => {
     const username = token.username;
     const user = await userModel.findOne({ username: username });
     const filmsFavoris = await filmModel.find({ _id: { $in: user[rubrique] } });
-    console.log(user);
     const filmsWithPosters = await getFilmsWithPosters(filmsFavoris);
     res.status(200).json(filmsWithPosters);
   } catch (error) {

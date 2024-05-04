@@ -2,36 +2,41 @@ import React, { useContext, useEffect } from "react";
 import { Route, Routes } from "react-router-dom";
 import Login from "./pages/login/login";
 import Inscription from "./pages/inscription/inscription";
+import HelloWorld from "./pages/helloWorld/helloWorld";
 import Home from "./pages/home/home";
 import MesFavoris from "./pages/favoris/mesFavoris";
 import AVoir from "./pages/aVoir/aVoir";
 import DejaVues from "./pages/vue/dejaVue";
-import HelloWorld from "./pages/helloWorld/helloWorld";
+import ADeuxPas from "./pages/aDeuxPas/aDeuxPas";
 import Loading from "./pages/loading/loading";
 import AuthMiddleware from "../middleware/AuthMiddleware";
 import { AuthContext } from "../context/AuthContext";
 import Layout from "./components/layout/layout";
 import LayoutAuth from "./components/layout/layoutAuth";
 import { useState } from "react";
+
 function App() {
-  const { isLoggedIn, isLoading, checkAuthStatus } = useContext(AuthContext);
+  const { isLoggedIn, isLoading, checkAuthStatus, getUserLocation } =
+    useContext(AuthContext);
+
   const [chargement, setChargement] = useState(true);
-  // On vérifie le statut d'authentification
+
   useEffect(() => {
     const timer = setTimeout(() => {
       checkAuthStatus();
     }, 700);
-
     return () => clearTimeout(timer);
   }, []);
 
-  // On vérifie si l'authentification est en cours
+  useEffect(() => {
+    getUserLocation();
+  }, []);
+
   useEffect(() => {
     if (!isLoading) {
       setChargement(false);
     }
   }, [isLoading]);
-  // Si l'authentification est en cours, afficher le spinner de chargement
   if (chargement) {
     return (
       <Routes>
@@ -41,6 +46,7 @@ function App() {
         <Route path="/mes-favoris" element={<Loading />} />
         <Route path="/a-voir" element={<Loading />} />
         <Route path="/deja-vues" element={<Loading />} />
+        <Route path="/a-deux-pas" element={<Loading />} />
       </Routes>
     );
   }
@@ -87,6 +93,14 @@ function App() {
           element={
             <AuthMiddleware isAuthenticated={isLoggedIn}>
               <DejaVues />
+            </AuthMiddleware>
+          }
+        />
+        <Route
+          path="/a-deux-pas"
+          element={
+            <AuthMiddleware isAuthenticated={isLoggedIn}>
+              <ADeuxPas />
             </AuthMiddleware>
           }
         />

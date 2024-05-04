@@ -7,6 +7,7 @@ import { BrowserRouter } from "react-router-dom";
 import { AuthProvider } from "../context/AuthContext.jsx";
 import { UserProvider } from "../context/UserContext.jsx";
 import { FilmProvider } from "../context/FilmContext.jsx";
+
 ReactDOM.createRoot(document.getElementById("root")).render(
   <React.StrictMode>
     <BrowserRouter>

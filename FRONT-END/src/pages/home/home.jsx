@@ -8,12 +8,12 @@ import Pagination from "../../components/pagination/pagination.jsx";
 import Notification from "../../components/notification/notification.jsx";
 
 const Home = () => {
-  const [page, setPage] = useState(1);
   const { isLoggedIn } = useContext(AuthContext);
+  const { addToRubriques } = useContext(UserContext);
   const { filmsSelected, setFilmsSelected, films, fetchFilms, filmsCount } =
     useContext(FilmContext);
+  const [page, setPage] = useState(1);
   const [selectedFilm, setSelectedFilm] = useState(null);
-  const { addToRubriques } = useContext(UserContext);
   const [notificationOpen, setNotificationOpen] = useState(false);
   const [notificationContent, setNotificationContent] = useState("");
 
@@ -34,7 +34,6 @@ const Home = () => {
       console.log(error);
     }
   };
-
   const handleAddAVoir = async (event, oneFilm) => {
     event.preventDefault();
     try {
@@ -64,10 +63,10 @@ const Home = () => {
   const handleCloseSearch = () => {
     setFilmsSelected([]);
   };
+
   const closeNotification = () => {
     setNotificationOpen(false);
   };
-
   const numberOfFilms = filmsCount;
   const numberOfPages = Math.ceil(numberOfFilms / 20);
 
@@ -78,6 +77,7 @@ const Home = () => {
           isOpen={notificationOpen}
           content={notificationContent}
           closeNotification={closeNotification}
+          className="fixed top-0 right-0"
         />
         {/* Affichage du film recherché */}
         {filmsSelected.length > 0 && (

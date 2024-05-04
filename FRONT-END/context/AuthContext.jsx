@@ -11,6 +11,7 @@ export const AuthProvider = ({ children }) => {
   const navigate = useNavigate();
   const [user, setUser] = useState("");
   const [isLoading, setIsLoading] = useState(true);
+  const [userLocation, setUserLocation] = useState({});
 
   /**
    * Fonction pour s'inscrire
@@ -39,7 +40,6 @@ export const AuthProvider = ({ children }) => {
     try {
       const { data, status } = await axios.post(URL.USER_LOGIN, userData);
       if (status === 200) {
-        // navigate("/");
         checkAuthStatus();
       }
       return data;
@@ -73,7 +73,7 @@ export const AuthProvider = ({ children }) => {
 
   const logout = async () => {
     try {
-      const { data, status } = await axios.get(URL.USER_LOGOUT);
+      const { status } = await axios.get(URL.USER_LOGOUT);
       if (status === 200) {
         checkAuthStatus();
       } else {
@@ -83,6 +83,23 @@ export const AuthProvider = ({ children }) => {
       console.log("Erreur lors de la déconnexion", error);
     }
   };
+  /**
+   * Fonction pour récupérer la localisation de l'utilisateur
+   */
+
+  const getUserLocation = async () => {
+    try {
+      navigator.geolocation.getCurrentPosition(function (position) {
+        const latitude = position.coords.latitude;
+        const longitude = position.coords.longitude;
+        console.log(latitude, longitude);
+        setUserLocation({ latitude: latitude, longitude: longitude });
+      });
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
   return (
     <AuthContext.Provider
       value={{
@@ -93,6 +110,8 @@ export const AuthProvider = ({ children }) => {
         signIn,
         user,
         isLoading,
+        userLocation,
+        getUserLocation,
       }}
     >
       {children}

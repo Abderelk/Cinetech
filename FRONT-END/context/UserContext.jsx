@@ -3,7 +3,6 @@ import axios from "axios";
 import { URL } from "../constant/api";
 
 export const UserContext = createContext();
-
 export const UserProvider = ({ children }) => {
   /**
    * Ajouter un film à une rubrique

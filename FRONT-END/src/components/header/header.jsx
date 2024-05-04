@@ -2,8 +2,13 @@ import React, { useState, useContext } from "react";
 import { Link } from "react-router-dom";
 import { AuthContext } from "../../../context/AuthContext";
 import { FilmContext } from "../../../context/FilmContext";
-import { FaHome, FaRegStar, FaRegEye, FaHourglassStart } from "react-icons/fa";
-
+import {
+  FaHome,
+  FaRegStar,
+  FaRegEye,
+  FaHourglassStart,
+  FaMapMarkerAlt,
+} from "react-icons/fa";
 const Header = () => {
   const { searchFilmByTerm } = useContext(FilmContext);
   const { isLoggedIn, logout } = useContext(AuthContext);
@@ -55,6 +60,14 @@ const Header = () => {
                 to="/a-voir"
               >
                 <FaHourglassStart className="text-xl mr-2" />À voir
+              </Link>
+            </li>
+            <li className="px-3 text-sm">
+              <Link
+                className=" flex text-center hover:border-b-2 border-red"
+                to="/a-deux-pas"
+              >
+                <FaMapMarkerAlt className="text-xl mr-2" />À deux pas
               </Link>
             </li>
           </ul>
