@@ -38,18 +38,21 @@ const Film = ({
           <button
             onClick={(event) => handleAddFavoris(event, oneFilm._id)}
             className="text-xl hover:bg-red hover:bg-opacity-50 hover:rounded-md p-2"
+            aria-label="Ajouter aux films favoris"
           >
             <FaRegStar />
           </button>
           <button
             onClick={(event) => handleAddVues(event, oneFilm._id)}
             className="text-xl hover:bg-red hover:bg-opacity-50 hover:rounded-md p-2"
+            aria-label="Ajouter aux films vus"
           >
             <FaRegEye />
           </button>
           <button
             onClick={(event) => handleAddAVoir(event, oneFilm._id)}
             className="text-xl hover:bg-red hover:bg-opacity-50 hover:rounded-md p-2"
+            aria-label="Ajouter aux films à voir"
           >
             <FaHourglassStart />
           </button>
@@ -60,6 +63,7 @@ const Film = ({
           <button
             onClick={(event) => handleRemoveFilm(event, oneFilm._id)}
             className="text-xl hover:bg-red hover:bg-opacity-50 hover:rounded-md p-2"
+            aria-label="Supprimer le film"
           >
             <FaDeleteLeft />
           </button>
@@ -71,7 +75,6 @@ const Film = ({
             onClick={() => handleToggleSynopsis(oneFilm._id)}
             src={`https://image.tmdb.org/t/p/w500/${oneFilm.posterUrl}`}
             alt={oneFilm.title}
-            loading="lazy"
             className="object-cover cursor-pointer h-96"
           />
         ) : (
@@ -79,7 +82,6 @@ const Film = ({
             onClick={() => handleToggleSynopsis(oneFilm._id)}
             src="src/assets/posterFilm.webp"
             alt={oneFilm.title}
-            loading="lazy"
             className="object-cover h-96 cursor-pointer"
           />
         )}

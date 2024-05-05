@@ -1,7 +1,7 @@
 import userModel from "../models/user.js";
 import jwt from "jsonwebtoken";
 import { env } from "../config/index.js";
-
+import axios from "axios";
 /**
  * Fonction pour ajouter un film aux favoris
  * @param {*} req - La requête contenant le film à ajouter aux favoris
@@ -108,5 +108,31 @@ export const removeFromRubrique = async (req, res) => {
     res
       .status(500)
       .json({ message: "Erreur lors du retrait du film des favoris" });
+  }
+};
+
+/**
+ * Fonctino pour récupérer les festivals près de l'utilisateur
+ * @param {*} req - La requête contenant les coordonnées de l'utilisateur
+ * @param {*} res - La réponse contenant les festivals trouvés près de l'utilisateur
+ * @returns
+ */
+export const getFestivalsNearUser = async (req, res) => {
+  try {
+    const { lat, lng } = req.query;
+    const max_km = 50;
+    const limit = 30;
+
+    const url = `https://data.culture.gouv.fr/api/explore/v2.1/catalog/datasets/festivals-global-festivals-_-pl/records?where=%20within_distance(geocodage_xy%2C%20geom'POINT(${lng}%20${lat})'%2C%20${max_km}km)&limit=${limit}&refine=discipline_dominante%3A%22Cin%C3%A9ma%2C%20audiovisuel%22`;
+
+    const response = await axios.get(url);
+    const festival = response.data.results;
+    console.log("Festivals trouvés près de l'utilisateur :", festival);
+    return res.status(200).json(festival);
+  } catch (err) {
+    console.error("Erreur lors de la récupération des festivals :", err);
+    return res
+      .status(500)
+      .json({ error: "Erreur lors de la récupération des festivals" });
   }
 };

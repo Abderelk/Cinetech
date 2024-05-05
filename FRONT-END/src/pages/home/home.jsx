@@ -6,6 +6,7 @@ import Film from "../../components/film/film.jsx";
 import { FaCircleXmark } from "react-icons/fa6";
 import Pagination from "../../components/pagination/pagination.jsx";
 import Notification from "../../components/notification/notification.jsx";
+import EmptyFilm from "../../components/film/emptyFilm.jsx";
 
 const Home = () => {
   const { isLoggedIn } = useContext(AuthContext);
@@ -51,6 +52,9 @@ const Home = () => {
       const data = await addToRubriques(filmId, "dejaVu");
       setNotificationContent(data);
       setNotificationOpen(true);
+      serTimeOut(() => {
+        setNotificationOpen(false);
+      }, 1500);
     } catch (error) {
       console.log(error);
     }
@@ -67,6 +71,7 @@ const Home = () => {
   const closeNotification = () => {
     setNotificationOpen(false);
   };
+  
   const numberOfFilms = filmsCount;
   const numberOfPages = Math.ceil(numberOfFilms / 20);
 
@@ -120,6 +125,15 @@ const Home = () => {
         </h2>
         {
           <div className="flex flex-wrap justify-center">
+            {films.length === 0 &&
+              Array.from({ length: 20 }).map((_, index) => (
+                <div
+                  key={index}
+                  className="bg-gray bg-opacity-5 rounded-md p-5 m-3 hover:scale-105 animate-pulse"
+                >
+                  <EmptyFilm index={index} />
+                </div>
+              ))}
             {films.map((oneFilm) => (
               <div
                 className={

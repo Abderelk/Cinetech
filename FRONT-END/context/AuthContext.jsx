@@ -83,16 +83,15 @@ export const AuthProvider = ({ children }) => {
       console.log("Erreur lors de la déconnexion", error);
     }
   };
+
   /**
    * Fonction pour récupérer la localisation de l'utilisateur
    */
-
   const getUserLocation = async () => {
     try {
       navigator.geolocation.getCurrentPosition(function (position) {
         const latitude = position.coords.latitude;
         const longitude = position.coords.longitude;
-        console.log(latitude, longitude);
         setUserLocation({ latitude: latitude, longitude: longitude });
       });
     } catch (error) {

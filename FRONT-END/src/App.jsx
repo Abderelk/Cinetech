@@ -8,36 +8,33 @@ import MesFavoris from "./pages/favoris/mesFavoris";
 import AVoir from "./pages/aVoir/aVoir";
 import DejaVues from "./pages/vue/dejaVue";
 import ADeuxPas from "./pages/aDeuxPas/aDeuxPas";
-import Loading from "./pages/loading/loading";
+import Loading from "./components/loading/loading";
 import AuthMiddleware from "../middleware/AuthMiddleware";
 import { AuthContext } from "../context/AuthContext";
+import { UserContext } from "../context/UserContext";
 import Layout from "./components/layout/layout";
 import LayoutAuth from "./components/layout/layoutAuth";
-import { useState } from "react";
 
 function App() {
   const { isLoggedIn, isLoading, checkAuthStatus, getUserLocation } =
     useContext(AuthContext);
 
-  const [chargement, setChargement] = useState(true);
+  const { getFestivalsNearUser } = useContext(UserContext);
 
+  // Pour vérifier si l'utilisateur est connecté dès le chargement de l'app et faire une page de chargement
   useEffect(() => {
     const timer = setTimeout(() => {
       checkAuthStatus();
     }, 700);
     return () => clearTimeout(timer);
   }, []);
-
+  // Pour charger la position de l'utilisateur dès le chargement de l'app
   useEffect(() => {
     getUserLocation();
+    getFestivalsNearUser();
   }, []);
 
-  useEffect(() => {
-    if (!isLoading) {
-      setChargement(false);
-    }
-  }, [isLoading]);
-  if (chargement) {
+  if (isLoading) {
     return (
       <Routes>
         <Route path="/" element={<Loading />} />
@@ -50,6 +47,7 @@ function App() {
       </Routes>
     );
   }
+
   return (
     <Routes>
       <Route element={<LayoutAuth />}>

@@ -9,15 +9,15 @@ import { UserProvider } from "../context/UserContext.jsx";
 import { FilmProvider } from "../context/FilmContext.jsx";
 
 ReactDOM.createRoot(document.getElementById("root")).render(
-  <React.StrictMode>
-    <BrowserRouter>
-      <AuthProvider>
-        <FilmProvider>
-          <UserProvider>
-            <App />
-          </UserProvider>
-        </FilmProvider>
-      </AuthProvider>
-    </BrowserRouter>
-  </React.StrictMode>
+  // <React.StrictMode>
+  <BrowserRouter>
+    <AuthProvider>
+      <FilmProvider>
+        <UserProvider>
+          <App />
+        </UserProvider>
+      </FilmProvider>
+    </AuthProvider>
+  </BrowserRouter>
+  // </React.StrictMode>
 );

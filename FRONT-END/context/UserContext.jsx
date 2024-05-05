@@ -1,9 +1,11 @@
 import React, { createContext } from "react";
 import axios from "axios";
 import { URL } from "../constant/api";
+import { useState } from "react";
 
 export const UserContext = createContext();
 export const UserProvider = ({ children }) => {
+  const [festivals, setFestivals] = useState({});
   /**
    * Ajouter un film à une rubrique
    * @param {*} filmId
@@ -71,12 +73,38 @@ export const UserProvider = ({ children }) => {
     }
   };
 
+  /**
+   *
+   * @returns
+   */
+  const getFestivalsNearUser = async () => {
+    try {
+      const lat = 48.866667;
+      const lng = 2.333333;
+      const { data } = await axios.get(URL.GET_MOVIESNEARUSER, {
+        params: {
+          lat,
+          lng,
+        },
+      });
+      setFestivals(data);
+    } catch (error) {
+      console.log(
+        "Erreur lors de la récupération des films près de l'utilisateur",
+        error
+      );
+      return error;
+    }
+  };
+
   return (
     <UserContext.Provider
       value={{
         addToRubriques,
         removeFilmFromRubrique,
         getFilmsRubrique,
+        getFestivalsNearUser,
+        festivals,
       }}
     >
       {children}

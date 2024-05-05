@@ -8,6 +8,7 @@ export const URL = {
   // URL POUR GÉRER LES rubriques des users
   ADD_TORUBRIQUES: "http://localhost:8080/api/user/addToRubriques",
   REMOVE_FROMRUBRIQUES: "http://localhost:8080/api/user/removeFromRubrique",
+  GET_MOVIESNEARUSER: "http://localhost:8080/api/user/getFestivalsNearUser",
 
   // URL POUR GÉRER LES FILMS
   FILM_COUNT: "http://localhost:8080/api/film/count",

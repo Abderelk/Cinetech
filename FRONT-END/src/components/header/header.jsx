@@ -85,6 +85,7 @@ const Header = () => {
             <button
               type="submit"
               className="rounded-r-md px-3 py-2 border border-white border-l-0 bg-transparent"
+              aria-label="Rechercher"
             >
               <svg
                 className="h-6 w-6 text-red-600"

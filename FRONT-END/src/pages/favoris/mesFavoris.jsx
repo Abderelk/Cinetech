@@ -1,6 +1,5 @@
 import React from "react";
 import MesRubriques from "../../components/mesRubriques/mesRubriques";
-
 import { URL } from "../../../constant/api";
 
 const MesFavoris = () => {

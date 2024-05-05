@@ -2,10 +2,14 @@ import React, { useState, useEffect, useContext } from "react";
 import Film from "../../components/film/film";
 import { UserContext } from "../../../context/UserContext";
 import Notification from "../notification/notification";
+import EmptyFilm from "../../components/film/emptyFilm.jsx";
+import { AuthContext } from "../../../context/AuthContext.jsx";
+
 const MesRubriques = ({ title, rubrique }) => {
   const [data, setData] = useState([]);
   const [loading, setLoading] = useState(true);
   const { removeFilmFromRubrique, getFilmsRubrique } = useContext(UserContext);
+  const { checkAuthStatus } = useContext(AuthContext);
   const [notificationOpen, setNotificationOpen] = useState(false);
   const [notificationContent, setNotificationContent] = useState("");
   useEffect(() => {
@@ -34,6 +38,9 @@ const MesRubriques = ({ title, rubrique }) => {
   const closeNotification = () => {
     setNotificationOpen(false);
   };
+  useEffect(() => {
+    checkAuthStatus();
+  }, []);
 
   const [selectedFilm, setSelectedFilm] = useState(null);
   const handleToggleSynopsis = (filmId) => {
@@ -50,6 +57,17 @@ const MesRubriques = ({ title, rubrique }) => {
         <h2 className="text-3xl font-bold border-b-2 border-red inline-block my-5">
           {title}
         </h2>
+        <div className="flex flex-wrap justify-center">
+          {loading &&
+            Array.from({ length: 20 }).map((_, index) => (
+              <div
+                key={index}
+                className="bg-gray bg-opacity-5 rounded-md p-5 m-3 hover:scale-105 "
+              >
+                <EmptyFilm index={index} />
+              </div>
+            ))}
+        </div>
         {!loading ? (
           data.length > 0 ? (
             <div className="flex flex-wrap justify-center">
