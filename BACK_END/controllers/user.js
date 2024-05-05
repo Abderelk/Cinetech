@@ -127,7 +127,6 @@ export const getFestivalsNearUser = async (req, res) => {
 
     const response = await axios.get(url);
     const festival = response.data.results;
-    console.log("Festivals trouvés près de l'utilisateur :", festival);
     return res.status(200).json(festival);
   } catch (err) {
     console.error("Erreur lors de la récupération des festivals :", err);

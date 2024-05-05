@@ -59,7 +59,7 @@ const MesRubriques = ({ title, rubrique }) => {
         </h2>
         <div className="flex flex-wrap justify-center">
           {loading &&
-            Array.from({ length: 20 }).map((_, index) => (
+            Array.from({ length: 4 }).map((_, index) => (
               <div
                 key={index}
                 className="bg-gray bg-opacity-5 rounded-md p-5 m-3 hover:scale-105 "

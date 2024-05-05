@@ -144,7 +144,7 @@ export const countFilms = async (_, res) => {
  * @param {*} originalTitle
  * @returns {String} Le lien du poster du film (URL) ou null si le poster n'est pas trouvé
  */
-async function getPosterUrl(title, originalTitle) {
+const getPosterUrl = async (title, originalTitle) => {
   try {
     const options = {
       method: "GET",
@@ -194,7 +194,7 @@ async function getPosterUrl(title, originalTitle) {
     console.log(`Erreur lors de la récupération de l'image: ${error}`);
     return { posterPath: null, voteAverage: null };
   }
-}
+};
 
 /**
  * Récupère les films avec leurs posters à partir de la liste de films
@@ -206,12 +206,14 @@ const getFilmsWithPosters = async (films) => {
     const getImagePromises = films.map((film) =>
       getPosterUrl(film.title, film.originalTitle)
     );
+
     const posterData = await Promise.all(getImagePromises);
-    const filmsWithPosters = films.map((film, index) => ({
+    const filmsWithPosters = await films.map((film, index) => ({
       ...film.toObject(),
       posterUrl: posterData[index].posterPath || null,
       voteAverage: posterData[index].voteAverage || null,
     }));
+
     return filmsWithPosters;
   } catch (error) {
     throw new Error(
@@ -227,26 +229,25 @@ const getFilmsWithPosters = async (films) => {
  */
 export const getFilms = async (req, res) => {
   try {
+    const startTime = Date.now();
+
     const page = req.query.page || 1;
     const filmsPerPage = 20;
     const offset = (page - 1) * filmsPerPage;
 
-    const films = await Film.find({})
+    const films = await Film.find()
       .sort({ _id: 1 })
       .skip(offset)
       .limit(filmsPerPage);
 
-    const getImagePromises = films.map((film) =>
-      getPosterUrl(film.title, film.originalTitle)
+    const filmsWithPosters = await getFilmsWithPosters(films);
+
+    const endTime = Date.now();
+    console.log(
+      `Temps d'exécution de la récupération des images: ${
+        endTime - startTime
+      } ms`
     );
-
-    const posterData = await Promise.all(getImagePromises);
-    const filmsWithPosters = films.map((film, index) => ({
-      ...film.toObject(),
-      posterUrl: posterData[index].posterPath || null,
-      voteAverage: posterData[index].voteAverage || null,
-    }));
-
     res.json(filmsWithPosters);
   } catch (error) {
     console.log(

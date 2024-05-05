@@ -21,12 +21,13 @@ function App() {
 
   const { getFestivalsNearUser } = useContext(UserContext);
 
-  // Pour vérifier si l'utilisateur est connecté dès le chargement de l'app et faire une page de chargement
+  // Pour vérifier si l'utilisateur est connecté dès le chargement de l'app et faire une page de chargement en attendant
+
   useEffect(() => {
-    const timer = setTimeout(() => {
-      checkAuthStatus();
-    }, 700);
-    return () => clearTimeout(timer);
+    // const timer = setTimeout(() => {
+    checkAuthStatus();
+    // }, 700);
+    // return () => clearTimeout(timer);
   }, []);
   // Pour charger la position de l'utilisateur dès le chargement de l'app
   useEffect(() => {
