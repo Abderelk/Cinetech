@@ -13,7 +13,7 @@ import authRouter from "./router/auth.js";
 // app express
 const app = express();
 // port
-const PORT = 5000;
+const PORT = env.port || 8080;
 // connexion à mon cluster
 mongoose
   .connect(env.mongoURI)

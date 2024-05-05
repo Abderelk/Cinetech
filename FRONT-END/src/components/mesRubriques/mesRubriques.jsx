@@ -1,9 +1,9 @@
 import React, { useState, useEffect, useContext } from "react";
 import Film from "../../components/film/film";
-import { UserContext } from "../../../context/UserContext";
+import { UserContext } from "../../context/UserContext";
 import Notification from "../notification/notification";
 import EmptyFilm from "../../components/film/emptyFilm.jsx";
-import { AuthContext } from "../../../context/AuthContext.jsx";
+import { AuthContext } from "../../context/AuthContext.jsx";
 
 const MesRubriques = ({ title, rubrique }) => {
   const [data, setData] = useState([]);

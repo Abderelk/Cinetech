@@ -1,8 +1,8 @@
 import React, { useEffect, useState } from "react";
 import MapComponent from "../../components/map/map.jsx";
 import { useContext } from "react";
-import { AuthContext } from "../../../context/AuthContext.jsx";
-import { UserContext } from "../../../context/UserContext.jsx";
+import { AuthContext } from "../../context/AuthContext.jsx";
+import { UserContext } from "../../context/UserContext.jsx";
 
 const ADeuxPas = () => {
   const { userLocation, checkAuthStatus } = useContext(AuthContext);

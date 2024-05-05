@@ -1,7 +1,7 @@
 import React, { useState, useContext } from "react";
 import { Link } from "react-router-dom";
-import { AuthContext } from "../../../context/AuthContext";
-import { FilmContext } from "../../../context/FilmContext";
+import { AuthContext } from "../../context/AuthContext";
+import { FilmContext } from "../../context/FilmContext";
 import {
   FaHome,
   FaRegStar,

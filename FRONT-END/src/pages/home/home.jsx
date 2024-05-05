@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useContext } from "react";
-import { AuthContext } from "../../../context/AuthContext.jsx";
-import { FilmContext } from "../../../context/FilmContext.jsx";
-import { UserContext } from "../../../context/UserContext.jsx";
+import { AuthContext } from "../../context/AuthContext.jsx";
+import { FilmContext } from "../../context/FilmContext.jsx";
+import { UserContext } from "../../context/UserContext.jsx";
 import Film from "../../components/film/film.jsx";
 import { FaCircleXmark } from "react-icons/fa6";
 import Pagination from "../../components/pagination/pagination.jsx";
@@ -71,7 +71,7 @@ const Home = () => {
   const closeNotification = () => {
     setNotificationOpen(false);
   };
-  
+
   const numberOfFilms = filmsCount;
   const numberOfPages = Math.ceil(numberOfFilms / 20);
 

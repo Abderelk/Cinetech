@@ -9,9 +9,9 @@ import AVoir from "./pages/aVoir/aVoir";
 import DejaVues from "./pages/vue/dejaVue";
 import ADeuxPas from "./pages/aDeuxPas/aDeuxPas";
 import Loading from "./components/loading/loading";
-import AuthMiddleware from "../middleware/AuthMiddleware";
-import { AuthContext } from "../context/AuthContext";
-import { UserContext } from "../context/UserContext";
+import AuthMiddleware from "./middleware/AuthMiddleware";
+import { AuthContext } from "./context/AuthContext";
+import { UserContext } from "./context/UserContext";
 import Layout from "./components/layout/layout";
 import LayoutAuth from "./components/layout/layoutAuth";
 

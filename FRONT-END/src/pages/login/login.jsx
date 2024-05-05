@@ -1,6 +1,6 @@
 // login.jsx
 import React, { useState, useContext } from "react";
-import { AuthContext } from "../../../context/AuthContext";
+import { AuthContext } from "../../context/AuthContext";
 
 const Login = () => {
   const { login } = useContext(AuthContext);

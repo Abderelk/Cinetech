@@ -1,6 +1,7 @@
 import React, { createContext, useEffect, useState } from "react";
 import axios from "axios";
-import { URL } from "../constant/api";
+import { URL } from "./../../constant/api";
+
 axios.defaults.withCredentials = true;
 
 export const FilmContext = createContext();
@@ -48,7 +49,7 @@ export const FilmProvider = ({ children }) => {
       console.log(error);
     }
   };
-  
+
   /**
    * Fonction pour chercher les films par term
    * @param {*} term : le terme de recherche
