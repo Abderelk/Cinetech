@@ -1,10 +1,10 @@
-import xlsx from "xlsx";
-import Film from "../models/film.js";
-import userModel from "../models/user.js";
-import filmModel from "../models/film.js";
-import axios from "axios";
-import { env } from "../config/index.js";
-import jwt from "jsonwebtoken";
+const xlsx = require("xlsx");
+const Film = require("../models/film");
+const userModel = require("../models/user");
+const filmModel = require("../models/film");
+const axios = require("axios");
+const { env } = require("../config/index");
+const jwt = require("jsonwebtoken");
 
 /**
  * Normalise les données du fichier Excel
@@ -59,7 +59,7 @@ const transformExcelData = () => {
  * Importe les films du fichier Excel dans la base de données
  * @param {*} res - La réponse HTTP
  */
-export const importFilms = async (_, res) => {
+const importFilms = async (_, res) => {
   try {
     const transformedData = transformExcelData();
     await Film.deleteMany();
@@ -76,7 +76,7 @@ export const importFilms = async (_, res) => {
 /**
  * Synchronise les films du fichier Excel avec ceux de la base de données en effectuant deux boucles, une pour ajouter les films manquant et mettre à jour les films existants, et une autre pour supprimer les films qui ne sont plus dans le fichier Excel
  */
-export const synchronizeFilms = async () => {
+const synchronizeFilms = async () => {
   try {
     const transformedData = transformExcelData();
     const localStorageFilms = await Film.find({});
@@ -128,7 +128,7 @@ export const synchronizeFilms = async () => {
  * Comptes le nombre de films dans la base de données, nécessaire pour la pagination
  * @param {*} res - La réponse HTTP contenant le nombre de films ou un message d'erreur avec un code 500 en cas d'erreur
  */
-export const countFilms = async (_, res) => {
+const countFilms = async (_, res) => {
   try {
     const count = await Film.countDocuments();
     res.json({ count });
@@ -191,7 +191,6 @@ const getPosterUrl = async (title, originalTitle) => {
       }
     }
   } catch (error) {
-    console.log(`Erreur lors de la récupération de l'image: ${error}`);
     return { posterPath: null, voteAverage: null };
   }
 };
@@ -227,7 +226,7 @@ const getFilmsWithPosters = async (films) => {
  * @param {*} req - La requête HTTP contenant le numéro de la page à récupérer
  * @param {*} res - La réponse contenant la liste des films
  */
-export const getFilms = async (req, res) => {
+const getFilms = async (req, res) => {
   try {
     const startTime = Date.now();
 
@@ -241,7 +240,6 @@ export const getFilms = async (req, res) => {
       .limit(filmsPerPage);
 
     const filmsWithPosters = await getFilmsWithPosters(films);
-
     const endTime = Date.now();
     console.log(
       `Temps d'exécution de la récupération des images: ${
@@ -264,7 +262,7 @@ export const getFilms = async (req, res) => {
  * @param {*} req - La requête contenant les cookies de l'utilisateur connecté
  * @param {*} res - La réponse contenant la liste des films favoris de l'utilisateur ou un message d'erreur
  */
-export const getRubriques = async (req, res) => {
+const getRubriques = async (req, res) => {
   try {
     const rubrique = req.query.rubrique;
     const token = jwt.verify(req.headers.cookie.split("=")[1], env.token);
@@ -303,7 +301,7 @@ function normalizeString(str) {
  * @param {*} req - La requête HTTP contenant les paramètres de recherche (query)
  * @param {*} res - La réponse contenant les films trouvés ou un message d'erreur avec un code 500 en cas d'erreur
  */
-export const searchFilmByTerm = async (req, res) => {
+const searchFilmByTerm = async (req, res) => {
   try {
     const term = req.query.term;
     const termNormalized = normalizeString(term);
@@ -328,4 +326,13 @@ export const searchFilmByTerm = async (req, res) => {
     console.log(`Erreur lors de la recherche des films: ${error}`);
     res.status(500).json({ message: "Erreur lors de la recherche des films" });
   }
+};
+
+module.exports = {
+  importFilms,
+  synchronizeFilms,
+  countFilms,
+  getFilms,
+  getRubriques,
+  searchFilmByTerm,
 };

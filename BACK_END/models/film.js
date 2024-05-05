@@ -1,4 +1,5 @@
-import mongoose from "mongoose";
+const mongoose = require("mongoose");
+
 const cinetechDb = mongoose.connection.useDb("cinetech");
 const filmSchema = new mongoose.Schema({
   _id: { type: Number, required: true },
@@ -13,4 +14,4 @@ const filmSchema = new mongoose.Schema({
 });
 
 const Film = cinetechDb.model("Film", filmSchema);
-export default Film;
+module.exports = Film;

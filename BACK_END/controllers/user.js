@@ -1,13 +1,14 @@
-import userModel from "../models/user.js";
-import jwt from "jsonwebtoken";
-import { env } from "../config/index.js";
-import axios from "axios";
+const userModel = require("../models/user");
+const jwt = require("jsonwebtoken");
+const { env } = require("../config/index");
+const axios = require("axios");
+
 /**
  * Fonction pour ajouter un film aux favoris
  * @param {*} req - La requête contenant le film à ajouter aux favoris
  * @param {*} res - La réponse contenant un message de succès ou d'erreur
  */
-export const addToRubriques = async (req, res) => {
+const addToRubriques = async (req, res) => {
   try {
     if (req.headers.cookie) {
       const token = jwt.verify(req.headers.cookie.split("=")[1], env.token);
@@ -68,7 +69,7 @@ export const addToRubriques = async (req, res) => {
  * @param {*} req - La requête contenant le film à supprimer des rubriques
  * @param {*} res - La réponse contenant un message de succès ou d'erreur
  */
-export const removeFromRubrique = async (req, res) => {
+const removeFromRubrique = async (req, res) => {
   try {
     // Vérifier si un cookie est présent dans les en-têtes de la requête
     if (req.headers.cookie) {
@@ -117,7 +118,7 @@ export const removeFromRubrique = async (req, res) => {
  * @param {*} res - La réponse contenant les festivals trouvés près de l'utilisateur
  * @returns
  */
-export const getFestivalsNearUser = async (req, res) => {
+const getFestivalsNearUser = async (req, res) => {
   try {
     const { lat, lng } = req.query;
     const max_km = 50;
@@ -134,4 +135,10 @@ export const getFestivalsNearUser = async (req, res) => {
       .status(500)
       .json({ error: "Erreur lors de la récupération des festivals" });
   }
+};
+
+module.exports = {
+  addToRubriques,
+  removeFromRubrique,
+  getFestivalsNearUser,
 };

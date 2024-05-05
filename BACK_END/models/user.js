@@ -1,5 +1,6 @@
-import mongoose from "mongoose";
-import mongooseUniqueValidator from "mongoose-unique-validator";
+const mongoose = require("mongoose");
+const mongooseUniqueValidator = require("mongoose-unique-validator");
+
 const userCinetechDb = mongoose.connection.useDb("userCinetech");
 const userSchema = mongoose.Schema({
   email: {
@@ -34,4 +35,4 @@ const userSchema = mongoose.Schema({
 userSchema.plugin(mongooseUniqueValidator);
 
 const userModel = userCinetechDb.model("User", userSchema);
-export default userModel;
+module.exports = userModel;

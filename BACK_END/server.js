@@ -1,15 +1,16 @@
+const express = require("express");
+const { env } = require("./config/index.js");
+const mongoose = require("mongoose");
+const chokidar = require("chokidar");
+const cors = require("cors");
+const { synchronizeFilms } = require("./controllers/film.js");
+const cookieParser = require("cookie-parser");
+const filmRouter = require("./router/film.js");
+const userRouter = require("./router/user.js");
+const authRouter = require("./router/auth.js");
+
 // server.js
-import express from "express";
-import { env } from "./config/index.js";
-import mongoose from "mongoose";
-import chokidar from "chokidar";
-import cors from "cors";
-import { synchronizeFilms } from "./controllers/film.js";
-import cookieParser from "cookie-parser";
 // router
-import filmRouter from "./router/film.js";
-import userRouter from "./router/user.js";
-import authRouter from "./router/auth.js";
 // app express
 const app = express();
 // port

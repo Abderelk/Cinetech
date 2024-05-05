@@ -1,15 +1,14 @@
-import userModel from "../models/user.js";
-import bcrypt from "bcrypt";
-import jwt from "jsonwebtoken";
-import { env } from "../config/index.js";
+const userModel = require("../models/user.js");
+const bcrypt = require("bcrypt");
+const jwt = require("jsonwebtoken");
+const { env } = require("../config/index.js");
 
 /**
- * Fonction pour s'inscrire
- * @param {*} req - La requête contenant les informations de l'utilisateur à créer
- * @param {*} res - La réponse contenant un message de succès ou d'erreur
+ * Function to sign up
+ * @param {*} req - The request containing the user information to create
+ * @param {*} res - The response containing a success or error message
  */
-
-export const signUp = async (req, res) => {
+module.exports.signUp = async (req, res) => {
   try {
     const hashedPassword = await bcrypt.hash(req.body.password, 10);
     const newUser = await userModel.create({
@@ -39,13 +38,7 @@ export const signUp = async (req, res) => {
   }
 };
 
-/**
- * Fonction pour se connecter
- * @param {*} req - La requête contenant les informations de l'utilisateur à connecter
- * @param {*} res - La réponse contenant un message de succès ou d'erreur et un token d'authentication en cas de succès qui sera stocké dans un cookie
- */
-
-export const login = async (req, res) => {
+module.exports.login = async (req, res) => {
   try {
     const user = await userModel.findOne({ email: req.body.email });
     if (!user) return res.status(404).json("Utilisateur introuvable");
@@ -64,13 +57,7 @@ export const login = async (req, res) => {
   }
 };
 
-/**
- * Fonction pour vérifier si l'utilisateur est connecté
- * @param {*} req - La requête contenant les cookies de l'utilisateur
- * @param {*} res - La réponse contenant un message de succès ou d'erreur et isLoggedIn à true si l'utilisateur est connecté, sinon false
- */
-
-export const checkAuth = async (req, res) => {
+module.exports.checkAuth = async (req, res) => {
   try {
     if (req.headers.cookie) {
       const token = req.headers.cookie.split("=")[1];
@@ -92,13 +79,7 @@ export const checkAuth = async (req, res) => {
   }
 };
 
-/**
- * Fonction pour se déconnecter
- * @param {*} req - La requête contenant les cookies de l'utilisateur connecté
- * @param {*} res - La réponse contenant un message de succès
- */
-
-export const logout = async (req, res) => {
+module.exports.logout = async (req, res) => {
   try {
     res.clearCookie("token");
     console.log(req.headers.cookie);

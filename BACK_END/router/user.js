@@ -1,13 +1,14 @@
-import express from "express";
-import {
+const express = require("express");
+
+const {
   addToRubriques,
   removeFromRubrique,
   getFestivalsNearUser,
-} from "../controllers/user.js";
+} = require("../controllers/user.js");
 const router = express.Router();
 
 router.post("/addToRubriques", addToRubriques);
 router.post("/removeFromRubrique", removeFromRubrique);
 router.get("/getFestivalsNearUser", getFestivalsNearUser);
 
-export default router;
+module.exports = router;
