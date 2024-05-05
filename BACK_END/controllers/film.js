@@ -154,7 +154,7 @@ const getPosterUrl = async (title, originalTitle) => {
         .replaceAll("é", "%C3%A9")}&include_adult=false`,
       headers: {
         accept: "application/json",
-        Authorization: env.cleApi,
+        Authorization: `Bearer ${env.cleApi}`,
       },
     };
     const response = await axios.request(options);
