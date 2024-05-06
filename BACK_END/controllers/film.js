@@ -31,7 +31,8 @@ const transformExcelData = () => {
   const filmsMap = new Map();
 
   filmsData.forEach((film) => {
-    const key = film.Titre;
+    const key = `${film.Titre}_${film.Id}`;
+
     const cleanFilm = {
       _id: film["Id"],
       title: normalizeExcelData(film["Titre"]),
@@ -83,6 +84,7 @@ const synchronizeFilms = async () => {
     const differentIds = [];
     const idForAdd = [];
     const idForDelete = [];
+
     transformedData.forEach(async (excelFilm) => {
       const existingFilm = localStorageFilms.find(
         (localStorageFilm) => localStorageFilm._id === excelFilm._id
@@ -263,14 +265,26 @@ const getFilms = async (req, res) => {
  * @param {*} res - La réponse contenant la liste des films favoris de l'utilisateur ou un message d'erreur
  */
 const getRubriques = async (req, res) => {
+  const authCookieName = "token";
   try {
-    const rubrique = req.query.rubrique;
-    const token = jwt.verify(req.headers.cookie.split("=")[1], env.token);
-    const username = token.username;
-    const user = await userModel.findOne({ username: username });
-    const filmsFavoris = await filmModel.find({ _id: { $in: user[rubrique] } });
-    const filmsWithPosters = await getFilmsWithPosters(filmsFavoris);
-    res.status(200).json(filmsWithPosters);
+    if (req.headers.cookie) {
+      // Recherchez le cookie d'authentification spécifique
+      const authCookie = req.headers.cookie
+        .split(";")
+        .find((cookie) => cookie.trim().startsWith(authCookieName + "="));
+      if (authCookie) {
+        const rubrique = req.query.rubrique;
+        const token = authCookie.split("=")[1]; // Extrait la valeur du cookie
+        const decodedToken = jwt.verify(token, env.token);
+        const username = decodedToken.username;
+        const user = await userModel.findOne({ username: username });
+        const filmsFavoris = await filmModel.find({
+          _id: { $in: user[rubrique] },
+        });
+        const filmsWithPosters = await getFilmsWithPosters(filmsFavoris);
+        res.status(200).json(filmsWithPosters);
+      }
+    }
   } catch (error) {
     console.log(error);
     res

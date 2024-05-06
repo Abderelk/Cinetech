@@ -68,7 +68,7 @@ const MesRubriques = ({ title, rubrique }) => {
               </div>
             ))}
         </div>
-        {!loading ? (
+        {!loading && data ? (
           data.length > 0 ? (
             <div className="flex flex-wrap justify-center">
               {data.map((oneFilm) => (

@@ -58,24 +58,33 @@ module.exports.login = async (req, res) => {
 };
 
 module.exports.checkAuth = async (req, res) => {
+  const authCookieName = "token";
   try {
     if (req.headers.cookie) {
-      const token = req.headers.cookie.split("=")[1];
-      const decodedToken = jwt.verify(token, env.token);
-      const username = decodedToken.username;
-      const expDate = new Date(decodedToken.exp * 1000);
-      const now = new Date();
+      // Recherchez le cookie d'authentification spécifique
+      const authCookie = req.headers.cookie
+        .split(";")
+        .find((cookie) => cookie.trim().startsWith(authCookieName + "="));
 
-      if (expDate < now) {
-        return res.json({ isLoggedIn: false, username: username });
-      } else {
-        return res.status(200).json({ isLoggedIn: true, username: username });
+      if (authCookie) {
+        const token = authCookie.split("=")[1]; // Extrait la valeur du cookie
+        const decodedToken = jwt.verify(token, env.token);
+        const username = decodedToken.username;
+        const expDate = new Date(decodedToken.exp * 1000);
+        const now = new Date();
+
+        if (expDate < now) {
+          return res.json({ isLoggedIn: false, username: username });
+        } else {
+          return res.status(200).json({ isLoggedIn: true, username: username });
+        }
       }
     }
+
     return res.json({ isLoggedIn: false });
   } catch (error) {
     console.log(error);
-    return res.status(500).json({ message: "Internal Server Error" });
+    return res.status(500).json({ message: "Internal Server Error", error });
   }
 };
 

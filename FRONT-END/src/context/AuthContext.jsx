@@ -1,7 +1,8 @@
 import React, { createContext, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
-import { URL } from "./../../constant/api";
+import { URL } from "../../constant/api";
+
 axios.defaults.withCredentials = true;
 
 export const AuthContext = createContext();

@@ -1,6 +1,7 @@
 // login.jsx
 import React, { useState, useContext } from "react";
 import { AuthContext } from "../../context/AuthContext";
+import { Link } from "react-router-dom";
 
 const Login = () => {
   const { login } = useContext(AuthContext);
@@ -53,9 +54,7 @@ const Login = () => {
               Connexion
             </button>
             <p className="text-white text-opacity-70">
-              <a href="/inscription" className="underline">
-                Vous n'avez pas de compte ? Inscrivez-vous
-              </a>
+              <Link to="/inscription">S'inscrire </Link>
             </p>
             {response && (
               <p className="text-red text-center mt-2 mb-0 font-bold text-xl">

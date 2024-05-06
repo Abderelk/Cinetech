@@ -52,7 +52,7 @@ const Home = () => {
       const data = await addToRubriques(filmId, "dejaVu");
       setNotificationContent(data);
       setNotificationOpen(true);
-      serTimeOut(() => {
+      setTimeOut(() => {
         setNotificationOpen(false);
       }, 1500);
     } catch (error) {

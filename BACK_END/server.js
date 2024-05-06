@@ -23,7 +23,7 @@ mongoose
 // middleware
 app.use(express.json());
 app.use(cookieParser());
-app.use(cors({ origin: PORT, credentials: true }));
+app.use(cors({ origin: true, credentials: true }));
 // PREFIX ROUTES
 app.use("/api/film", filmRouter);
 app.use("/api/user", userRouter);
