@@ -31,8 +31,7 @@ const transformExcelData = () => {
   const filmsMap = new Map();
 
   filmsData.forEach((film) => {
-    const key = `${film.Titre}_${film.Id}`;
-
+    const key = film.Titre;
     const cleanFilm = {
       _id: film["Id"],
       title: normalizeExcelData(film["Titre"]),
