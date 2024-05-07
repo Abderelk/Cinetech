@@ -16,6 +16,7 @@ export default {
       white: "#f9f9f9",
       black: "#111",
       gray: "#9B9B9B",
+      green: "#556B2F",
     },
     borderColor: {
       black: "#111",

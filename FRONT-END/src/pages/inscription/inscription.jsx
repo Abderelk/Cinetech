@@ -36,7 +36,7 @@ const Inscription = () => {
               htmlFor="username"
               className="mb-1 text-opacity-70 text-white"
             >
-              Username
+              Pseudo
             </label>
             <input
               placeholder="antoinelvh"
@@ -50,7 +50,7 @@ const Inscription = () => {
               htmlFor="password"
               className="mb-1 text-opacity-70 text-white"
             >
-              Password
+              Mot de passe
             </label>
             <input
               placeholder="********"

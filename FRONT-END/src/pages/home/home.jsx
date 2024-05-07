@@ -35,12 +35,16 @@ const Home = () => {
       console.log(error);
     }
   };
+  
   const handleAddAVoir = async (event, oneFilm) => {
     event.preventDefault();
     try {
       const data = await addToRubriques(oneFilm, "aVoir");
       setNotificationContent(data);
       setNotificationOpen(true);
+      setTimeout(() => {
+        setNotificationOpen(false);
+      }, 2000);
     } catch (error) {
       console.log(error);
     }
@@ -52,9 +56,9 @@ const Home = () => {
       const data = await addToRubriques(filmId, "dejaVu");
       setNotificationContent(data);
       setNotificationOpen(true);
-      setTimeOut(() => {
+      setTimeout(() => {
         setNotificationOpen(false);
-      }, 1500);
+      }, 2000);
     } catch (error) {
       console.log(error);
     }
@@ -88,7 +92,7 @@ const Home = () => {
         {filmsSelected.length > 0 && (
           <div className="flex justify-between my-5">
             <h2 className="text-3xl font-bold border-b-2 border-red inline-block">
-              Film recherché
+              Films recherchés
             </h2>
             <button onClick={handleCloseSearch}>
               <FaCircleXmark className="text-4xl" />

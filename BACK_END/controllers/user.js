@@ -47,7 +47,7 @@ const addToRubriques = async (req, res) => {
                 { $push: { dejaVu: filmId }, $pull: { aVoir: filmId } }
               );
               return res.json(
-                "Le film a été ajouté à la liste des films vus et retiré des films à voir."
+                "Le film a été ajouté à la liste des films vus et retiré de la liste des films à voir."
               );
             } else {
               // Ajouter le film à dejaVu
@@ -55,7 +55,7 @@ const addToRubriques = async (req, res) => {
                 { username },
                 { $push: { dejaVu: filmId } }
               );
-              return res.json("Le film est déjà dans les films vus.");
+              return res.json("Le film a été ajouté à la liste des films vus.");
             }
           } else {
             // Vérifier si le film est déjà dans la rubrique spécifiée

@@ -69,7 +69,9 @@ const Film = ({
           </button>
         </div>
       )}
-      <div className={selectedFilm === oneFilm._id ? "flex" : ""}>
+      <div
+        className={selectedFilm === oneFilm._id ? "inline-block sm:flex" : ""}
+      >
         {oneFilm.posterUrl != null ? (
           <img
             onClick={() => handleToggleSynopsis(oneFilm._id)}

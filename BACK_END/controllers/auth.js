@@ -2,6 +2,7 @@ const userModel = require("../models/user.js");
 const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");
 const { env } = require("../config/index.js");
+const sanitize = require("sanitize-html");
 
 /**
  * Function to sign up
@@ -10,11 +11,28 @@ const { env } = require("../config/index.js");
  */
 module.exports.signUp = async (req, res) => {
   try {
-    const hashedPassword = await bcrypt.hash(req.body.password, 10);
+    const passwordRegex = /^(?=.*[A-Z]).{6,}$/;
+    if (!passwordRegex.test(req.body.password)) {
+      return res
+        .status(400)
+        .json(
+          "Le mot de passe doit contenir au moins 6 caractères et une lettre majuscule ⛔️"
+        );
+    }
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (!emailRegex.test(req.body.email)) {
+      return res.status(400).json("L'adresse e-mail n'est pas valide ⛔️");
+    }
+    const hashedPassword = await bcrypt.hash(sanitize(req.body.password), 10);
+    const username = sanitize(req.body.username);
+    const email = sanitize(req.body.email);
+    console.log(username);
     const newUser = await userModel.create({
-      ...req.body,
+      username: username,
+      email: email,
       password: hashedPassword,
     });
+
     res.status(201).json({ message: "User created successfully!", newUser });
   } catch (error) {
     console.log(error);
@@ -40,6 +58,18 @@ module.exports.signUp = async (req, res) => {
 
 module.exports.login = async (req, res) => {
   try {
+    const passwordRegex = /^(?=.*[A-Z]).{6,}$/;
+    if (!passwordRegex.test(req.body.password)) {
+      return res
+        .status(400)
+        .json(
+          "Votre mot de passe contient au moins 6 caractères et une lettre majuscule 😁"
+        );
+    }
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (!emailRegex.test(req.body.email)) {
+      return res.status(400).json("L'adresse e-mail n'est pas valide 😁");
+    }
     const user = await userModel.findOne({ email: req.body.email });
     if (!user) return res.status(404).json("Utilisateur introuvable");
     const comparePassword = await bcrypt.compare(

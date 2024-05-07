@@ -30,6 +30,8 @@ const Login = () => {
             <input
               type="email"
               placeholder="antoine@gmail.com"
+              name="email"
+              id="email"
               onChange={(e) => setUser({ ...user, email: e.target.value })}
               className="rounded-md pl-3 mb-5 py-2 focus:outline-none bg-opacity-0 bg-black border border-white"
             />
@@ -37,11 +39,13 @@ const Login = () => {
               htmlFor="password"
               className="mb-1 text-opacity-70 text-white "
             >
-              password
+              Mot de passe
             </label>
             <input
               type="password"
               placeholder="Mot de passe"
+              name="password"
+              id="password"
               onChange={(e) => setUser({ ...user, password: e.target.value })}
               required
               className="rounded-md pl-3 py-2 mb-2 focus:outline-none bg-opacity-0 bg-black border border-white"

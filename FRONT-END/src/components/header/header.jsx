@@ -42,7 +42,7 @@ const Header = () => {
               >
                 {" "}
                 <FaRegStar className="text-xl mr-2" />
-                Mes favoris
+                Favoris
               </Link>
             </li>
             <li className="px-3 text-sm">
@@ -51,7 +51,7 @@ const Header = () => {
                 to="/deja-vues"
               >
                 <FaRegEye className="text-xl mr-2" />
-                Déjà vues
+                Déjà vus
               </Link>
             </li>
             <li className="px-3 text-sm">

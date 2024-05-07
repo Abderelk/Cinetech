@@ -16,7 +16,6 @@ const ADeuxPas = () => {
   const showFestivalDetails = (festival) => {
     setSelectedFestival(selectedFestival == null ? festival : null);
   };
-  console.log(festivals);
   return (
     <div className="px-14 py-2 min-h-screen">
       <h2 className="text-3xl font-bold border-b-2 border-red inline-block my-5">
