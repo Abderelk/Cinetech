@@ -9,10 +9,14 @@ import {
   FaHourglassStart,
   FaMapMarkerAlt,
 } from "react-icons/fa";
+import { RxHamburgerMenu } from "react-icons/rx";
+import { IoIosClose } from "react-icons/io";
+
 const Header = () => {
   const { searchFilmByTerm } = useContext(FilmContext);
   const { isLoggedIn, logout } = useContext(AuthContext);
   const [term, setTerm] = useState("");
+  const [isMenuOpen, setIsMenuOpen] = useState(false);
   const isHomePage = location.pathname === "/";
 
   const handleSubmit = async (event) => {
@@ -20,62 +24,80 @@ const Header = () => {
     searchFilmByTerm(term);
   };
 
+  const toggleMenu = () => {
+    setIsMenuOpen(!isMenuOpen);
+  };
+
   return (
     <header className="flex flex-col md:flex-row justify-between items-center mb-10 px-5 md:px-20 py-5">
-      <h1 className="text-red text-3xl mb-2 md:mb-0">Cineteck</h1>
+      <h1 className="text-red text-3xl  md:mb-0">Cineteck</h1>
       {isLoggedIn && (
-        <nav className="flex flex-wrap justify-center md:justify-start">
-          <ul className="flex flex-row items-center">
-            <li className="px-3 text-sm">
-              <Link
-                className="flex text-center hover:border-b-2 border-red "
-                to="/"
-              >
-                <FaHome className="text-xl mr-2" />
-                Accueil
-              </Link>
-            </li>
-            <li className=" px-3  text-sm">
-              <Link
-                className="flex text-center  hover:border-b-2 border-red"
-                to="/mes-favoris"
-              >
-                {" "}
-                <FaRegStar className="text-xl mr-2" />
-                Favoris
-              </Link>
-            </li>
-            <li className="px-3 text-sm">
-              <Link
-                className=" flex text-center hover:border-b-2 border-red"
-                to="/deja-vues"
-              >
-                <FaRegEye className="text-xl mr-2" />
-                Déjà vus
-              </Link>
-            </li>
-            <li className="px-3 text-sm">
-              <Link
-                className=" flex text-center hover:border-b-2 border-red "
-                to="/a-voir"
-              >
-                <FaHourglassStart className="text-xl mr-2" />À voir
-              </Link>
-            </li>
-            <li className="px-3 text-sm">
-              <Link
-                className=" flex text-center hover:border-b-2 border-red"
-                to="/a-deux-pas"
-              >
-                <FaMapMarkerAlt className="text-xl mr-2" />À deux pas
-              </Link>
-            </li>
-          </ul>
-        </nav>
+        <>
+          <nav className={`md:flex  ${isMenuOpen ? "flex" : "hidden"}`}>
+            <ul className="flex flex-col md:flex-row md:items-center">
+              <li className="p-2 text-sm">
+                <Link
+                  className="flex text-center hover:border-b-2 border-red "
+                  to="/"
+                >
+                  <FaHome className="text-xl mr-2" />
+                  Accueil
+                </Link>
+              </li>
+              <li className="p-2  text-sm">
+                <Link
+                  className="flex text-center  hover:border-b-2 border-red"
+                  to="/mes-favoris"
+                >
+                  <FaRegStar className="text-xl mr-2" />
+                  Favoris
+                </Link>
+              </li>
+              <li className="p-2 text-sm">
+                <Link
+                  className=" flex text-center hover:border-b-2 border-red"
+                  to="/deja-vues"
+                >
+                  <FaRegEye className="text-xl mr-2" />
+                  Déjà vus
+                </Link>
+              </li>
+              <li className="p-2 text-sm">
+                <Link
+                  className=" flex text-center hover:border-b-2 border-red "
+                  to="/a-voir"
+                >
+                  <FaHourglassStart className="text-xl mr-2" />À voir
+                </Link>
+              </li>
+              <li className="p-2 text-sm">
+                <Link
+                  className=" flex text-center hover:border-b-2 border-red"
+                  to="/a-deux-pas"
+                >
+                  <FaMapMarkerAlt className="text-xl mr-2" />À deux pas
+                </Link>
+              </li>
+            </ul>
+          </nav>
+          <button
+            className="md:hidden border border-transparent rounded-md p-2 my-3"
+            onClick={toggleMenu}
+          >
+            {isMenuOpen ? (
+              <IoIosClose className="text-2xl" />
+            ) : (
+              <RxHamburgerMenu className="text-xl" />
+            )}
+          </button>
+        </>
       )}
-      <div className="flex items-center mt-4 md:mt-0">
+      <div className="sm:flex items-center text-center md:mt-0">
         {isHomePage && (
-          <form onSubmit={handleSubmit} className="flex items-center mr-2">
+          <form
+            onSubmit={handleSubmit}
+            className="flex items-center sm:mr-4 m-4"
+          >
             <input
               type="search"
               onChange={(event) => setTerm(event.target.value)}
@@ -84,7 +106,7 @@ const Header = () => {
             />
             <button
               type="submit"
-              className="rounded-r-md px-3 py-2 border border-white border-l-0 bg-transparent"
+              className="rounded-r-md sm:px-3 px-1 py-2 border border-white border-l-0 bg-transparent "
               aria-label="Rechercher"
             >
               <svg

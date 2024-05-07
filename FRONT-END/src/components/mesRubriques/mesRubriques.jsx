@@ -47,7 +47,7 @@ const MesRubriques = ({ title, rubrique }) => {
     setSelectedFilm(selectedFilm === filmId ? null : filmId);
   };
   return (
-    <div className="px-14 py-2 min-h-screen">
+    <div className="sm:px-14 px-3  py-2 min-h-screen">
       <main>
         <Notification
           isOpen={notificationOpen}
@@ -75,7 +75,7 @@ const MesRubriques = ({ title, rubrique }) => {
                 <div
                   className={
                     selectedFilm == oneFilm._id
-                      ? "bg-gray bg-opacity-5 rounded-md p-5 m-3 w-full"
+                      ? "bg-gray bg-opacity-5 rounded-md p-5 m-3 sm:w-full"
                       : "bg-gray bg-opacity-5 rounded-md p-5 m-3 hover:scale-105"
                   }
                   key={oneFilm._id}

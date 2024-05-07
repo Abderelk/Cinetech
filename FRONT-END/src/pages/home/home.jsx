@@ -35,7 +35,7 @@ const Home = () => {
       console.log(error);
     }
   };
-  
+
   const handleAddAVoir = async (event, oneFilm) => {
     event.preventDefault();
     try {
@@ -80,7 +80,7 @@ const Home = () => {
   const numberOfPages = Math.ceil(numberOfFilms / 20);
 
   return (
-    <div className="px-14 py-2 min-h-screen">
+    <div className="sm:px-14 px-3 py-2 min-h-screen">
       <main>
         <Notification
           isOpen={notificationOpen}
@@ -105,7 +105,7 @@ const Home = () => {
               <div
                 className={
                   selectedFilm == filmSelected._id
-                    ? "bg-gray bg-opacity-5 rounded-md p-5 m-3 w-full"
+                    ? "bg-gray bg-opacity-5 rounded-md p-5 m-3 sm:w-full"
                     : "bg-gray bg-opacity-5 rounded-md p-5 m-3 hover:scale-105"
                 }
                 key={filmSelected._id}
@@ -142,7 +142,7 @@ const Home = () => {
               <div
                 className={
                   selectedFilm == oneFilm._id
-                    ? "bg-gray bg-opacity-5 rounded-md p-5 m-3 w-full"
+                    ? "bg-gray bg-opacity-5 rounded-md p-5 m-3 sm:w-full"
                     : "bg-gray bg-opacity-5 rounded-md p-5 m-3 hover:scale-105"
                 }
                 key={oneFilm._id}

@@ -82,7 +82,7 @@ const Film = ({
         ) : (
           <img
             onClick={() => handleToggleSynopsis(oneFilm._id)}
-            src="src/assets/posterFilm.webp"
+            src="/assets/posterFilm.webp"
             alt={oneFilm.title}
             className="object-cover h-96 cursor-pointer"
           />
@@ -91,7 +91,7 @@ const Film = ({
           <div className="flex justify-between items-center">
             <h2
               className={
-                selectedFilm === oneFilm._id ? "text-3xl mx-4" : "text-xl"
+                selectedFilm === oneFilm._id ? " sm:text-3xl mx-4" : "text-xl"
               }
             >
               {oneFilm.title}

@@ -8,10 +8,15 @@ const ADeuxPas = () => {
   const { userLocation, checkAuthStatus } = useContext(AuthContext);
   const { festivals } = useContext(UserContext);
   const [selectedFestival, setSelectedFestival] = useState(null);
+  const { getFestivalsNearUser } = useContext(UserContext);
 
   useEffect(() => {
     checkAuthStatus();
   }, []);
+
+  useEffect(() => {
+    getFestivalsNearUser({ userLocation: userLocation });
+  }, [userLocation]);
 
   const showFestivalDetails = (festival) => {
     setSelectedFestival(selectedFestival == null ? festival : null);
@@ -32,7 +37,7 @@ const ADeuxPas = () => {
       <h2 className="text-3xl font-bold border-b-2 border-red inline-block my-5">
         Liste des festivals
       </h2>
-      <div className="flex flex-wrap justify-center">
+      <div className="sm:flex flex-wrap justify-center ">
         {festivals.length === 0 && (
           <h1>
             Pas de festival à proximité de chez vous. Vous pouvez en ajouter
@@ -40,7 +45,8 @@ const ADeuxPas = () => {
           </h1>
         )}
 
-        {festivals.length > 0 &&
+        {festivals &&
+          festivals.length > 0 &&
           festivals.map((festival, index) => {
             return (
               <div
@@ -48,8 +54,8 @@ const ADeuxPas = () => {
                 key={index}
                 className={
                   index === selectedFestival
-                    ? "bg-gray bg-opacity-5 rounded-md p-5 m-3  cursor-pointer w-5/6 flex justify-around "
-                    : "bg-gray bg-opacity-5 rounded-md p-5 m-3 hover:scale-105 cursor-pointer w-1/6"
+                    ? "bg-gray bg-opacity-5 rounded-md p-5 m-3 sm:w-full"
+                    : "bg-gray bg-opacity-5 rounded-md p-5 m-3 hover:scale-105"
                 }
               >
                 <h2

@@ -77,10 +77,10 @@ export const UserProvider = ({ children }) => {
    *
    * @returns
    */
-  const getFestivalsNearUser = async () => {
+  const getFestivalsNearUser = async ({ userLocation }) => {
     try {
-      const lat = 48.866667;
-      const lng = 2.333333;
+      const lat = userLocation.latitude || 48.866667;
+      const lng = userLocation.longitude || 2.333333;
       const { data } = await axios.get(URL.GET_MOVIESNEARUSER, {
         params: {
           lat,

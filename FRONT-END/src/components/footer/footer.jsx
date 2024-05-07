@@ -10,7 +10,7 @@ const Footer = () => {
 
   return (
     <footer>
-      <div className="flex flex-row justify-between mt-10 mb-2 px-20 py-5 ">
+      <div className="flex flex-row justify-between mt-10 mb-2 sm:px-20 px-10 py-5 ">
         <p className="inline-block text-xs">©2024-Abderrahmane-ELKafif</p>
         <p
           className="inline-block text-xs cursor-pointer"

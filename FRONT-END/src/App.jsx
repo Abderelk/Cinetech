@@ -11,15 +11,12 @@ import ADeuxPas from "./pages/aDeuxPas/aDeuxPas";
 import Loading from "./components/loading/loading";
 import AuthMiddleware from "./middleware/AuthMiddleware";
 import { AuthContext } from "./context/AuthContext";
-import { UserContext } from "./context/UserContext";
 import Layout from "./components/layout/layout";
 import LayoutAuth from "./components/layout/layoutAuth";
 
 function App() {
   const { isLoggedIn, isLoading, checkAuthStatus, getUserLocation } =
     useContext(AuthContext);
-
-  const { getFestivalsNearUser } = useContext(UserContext);
 
   // Pour vérifier si l'utilisateur est connecté dès le chargement de l'app et faire une page de chargement en attendant
 
@@ -32,7 +29,6 @@ function App() {
   // Pour charger la position de l'utilisateur dès le chargement de l'app
   useEffect(() => {
     getUserLocation();
-    getFestivalsNearUser();
   }, []);
 
   if (isLoading) {
